@@ -16,7 +16,6 @@ class Player(CircleShape):
         self.rotation = 0
         self.useable_stamina = stamina
         self.__stamina = stamina
-      
         
         # in the Player class
     def triangle(self) -> list[pygame.Vector2]:
@@ -37,25 +36,25 @@ class Player(CircleShape):
     
     def update(self, dt: float) -> None:
         keys = pygame.key.get_pressed()
-        
-        if keys[pygame.K_w]:
-            self.move(dt)
-        if keys[pygame.K_a]:
-            self.rotate(-dt)
-        if keys[pygame.K_s]:
-            self.move(-dt)
-        if keys[pygame.K_d]:
-            self.rotate(dt)
-        if keys[pygame.K_LSHIFT] and keys[pygame.K_w] and self.useable_stamina > 0:
-            self.move(dt*1.2)
-            self.useable_stamina -= 1 * dt
+        if keys:
+            if keys[pygame.K_w]:
+                self.move(dt)
+            if keys[pygame.K_a]:
+                self.rotate(-dt)
+            if keys[pygame.K_s]:
+                self.move(-dt)
+            if keys[pygame.K_d]:
+                self.rotate(dt)
+            if keys[pygame.K_LSHIFT] and keys[pygame.K_w] and self.useable_stamina > 0:
+                self.move(dt*1.2)
+                self.useable_stamina -= 80 * dt
 
-            
-        elif not keys[pygame.K_LSHIFT]:
-            self.useable_stamina += 0.2 * dt
+                
+            elif not keys[pygame.K_LSHIFT]:
+                self.useable_stamina += 20 * dt
 
-        if self.useable_stamina > self.__stamina:
-            self.useable_stamina = self.__stamina
+            if self.useable_stamina > self.__stamina:
+                self.useable_stamina = self.__stamina
             
         
             
