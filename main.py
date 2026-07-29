@@ -60,6 +60,7 @@ def main():
                 player.position.x = x
                 player.position.y = y
                 
+                
   
                 if player.lives <= 0:
                     print("Game Over!")

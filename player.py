@@ -7,6 +7,7 @@ from constants import (
     PLAYER_TURN_SPEED,
     PLAYER_SPEED,
     PLAYER_IMMUNITY_DURATION,
+    BAR_COLOR
 )
 
 
@@ -16,6 +17,7 @@ class Player(CircleShape):
         super().__init__(x,y, PLAYER_RADIUS)
         self.rotation = 0
         self.useable_stamina = stamina
+        self.color = BAR_COLOR
         self.__stamina = stamina
         self.lives = lives
         self.last_collide_time = 0
@@ -33,13 +35,16 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen: pygame.Surface) -> None:
-        pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)
+        player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
+        if self.is_immune():
+            self.color = "grey"
+        else:
+            self.color = BAR_COLOR
 
     def is_immune(self):
         seconds = pygame.time.get_ticks() 
         if seconds - self.last_collide_time < self.immunity_duration:
             return True
-        
         return False
     
     def rotate(self, dt: float) -> None:
