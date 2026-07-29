@@ -1,27 +1,41 @@
 import pygame
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, STARTING_POS, PLAYER_STAMINA
-from logger import log_state
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, PLAYER_STAMINA, PLAYER_LIVES, PLAYER_IMMUNITY_DURATION
+from logger import log_state, log_event
 from images import background, background_rect
 from player import Player
 from hud import Hud
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
+from sys import exit as leave
 
 def main():
-
-    pygame.init()
-    pygame.display.set_caption("Asteroids", "A game about Asteroids!")
     print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
+
+    pygame.init()
+    pygame.display.set_caption("Asteroids", "A game about Asteroids!")
+    
+    x = SCREEN_WIDTH / 2
+    y = SCREEN_HEIGHT / 2
     
     updatable = pygame.sprite.Group()
+    
     drawable = pygame.sprite.Group()
     
+    asteroids = pygame.sprite.Group() 
+    
+    Asteroid.containers = (asteroids, updatable, drawable)
+    AsteroidField.containers = (updatable)
     Player.containers = (updatable, drawable)
     Hud.containers = (updatable, drawable)
     
-    
-    player = Player(STARTING_POS["x"], STARTING_POS["y"], PLAYER_STAMINA)
+    player = Player(x, y, PLAYER_STAMINA, PLAYER_LIVES)
+
+    asteroid_field = AsteroidField()
     hud = Hud(player)
+    
+   
     
     clock = pygame.time.Clock()
     dt = 0.0
@@ -35,7 +49,25 @@ def main():
                 return
         # Visual elements must go after otherwise it will be overridden
         updatable.update(dt)
-    
+        for asteroid in asteroids:
+            if asteroid.collides_with(player):
+                log_event("player_hit")
+                player.lives -= 1
+                # add immunity frames
+                player.last_collide_time = pygame.time.get_ticks() 
+                
+                # play an animation
+                player.position.x = x
+                player.position.y = y
+                
+  
+                if player.lives <= 0:
+                    print("Game Over!")
+                    leave()
+        
+        # print("invulurnable if 1500ms ",pygame.time.get_ticks() - player.last_collide_time, player.is_immune())
+        # print(f"player lives: {player.lives}")
+            
         # Background images
         screen.fill("black")
         screen.blit(background, background_rect)
