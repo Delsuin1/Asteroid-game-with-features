@@ -17,20 +17,17 @@ def main():
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
 
-    
+    # move to menu module
     def draw_text(text, font, text_color, x, y):
         style = font.render(text, False, text_color)
         screen.blit(style, (x,y))
-    
-    
     
     
     pygame.init()
     pygame.display.set_caption("Asteroids", "A game about Asteroids!")
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    x = SCREEN_WIDTH / 2
-    y = SCREEN_HEIGHT / 2
+    
     
     updatable = pygame.sprite.Group()
     
@@ -44,21 +41,16 @@ def main():
     AsteroidField.containers = (updatable)
     Player.containers = (updatable, drawable)
     Hud.containers = (gui, updatable, drawable)
-    
-    
 
-    player = Player(x, y, PLAYER_STAMINA, PLAYER_LIVES)
+    player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
     hud = Hud(player)
-  
    
     explosions_path = ["explosions/explode.wav", "explosions/explodemini.wav"]
     
     
     clock = pygame.time.Clock()
     dt = 0.0
-    
-    
     
    
     while True:
@@ -69,9 +61,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     game_active = False
-                    
-                    
-                    
+                                    
                 if not game_active:
                     if event.key == pygame.K_SPACE:
                         game_active = True
@@ -82,6 +72,7 @@ def main():
                 
             # Visual elements must go after otherwise it will be overridden
             updatable.update(dt)
+            print(player.position)
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
@@ -96,8 +87,8 @@ def main():
                     
                     # play explosion animation 
                     
-                    player.position.x = x
-                    player.position.y = y
+                    player.position.x = X
+                    player.position.y = Y
                     
                     
     
@@ -106,17 +97,17 @@ def main():
                         game_active = False
             
             # print("invulurnable if 1500ms ",pygame.time.get_ticks() - player.last_collide_time, player.is_immune())
-            # print(f"player lives: {player.lives}")
-                
+            # print(f"player lives: {player.lives}"
+            
+
             # Background images
             screen.fill("black")
             screen.blit(background, background_rect)
-            
-            
+
             
             for drawables in drawable:
                 drawables.draw(screen)
-                
+                       
             pygame.display.flip()
             dt = clock.tick(60) / 1000
         else:

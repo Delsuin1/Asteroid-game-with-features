@@ -13,7 +13,7 @@ class CircleShape(pygame.sprite.Sprite):
             super().__init__()
 
         self.position: pygame.Vector2 = pygame.Vector2(x, y)
-        self.velocity = pygame.Vector2(0, 0)
+        self.velocity = pygame.Vector2(0, 2)
         self.radius = radius
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -29,6 +29,8 @@ class CircleShape(pygame.sprite.Sprite):
         if self.position.distance_to(other.position) <= self.radius + other.radius:
             if not other.is_immune():
                 return True
+            
+        # create a small 10% percent chance for coliding asteroids to break into small objects
         return False
         
         
