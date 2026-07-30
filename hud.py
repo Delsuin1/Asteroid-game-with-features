@@ -33,12 +33,6 @@ class Hud(RectShape):
     def draw(self, screen):
         self.stamina_hud(screen)
         self.lives_hud(screen)
-        
-    
-        
-        
-        
-        
         screen.blit(score_text, score_text_rect)
         
     
