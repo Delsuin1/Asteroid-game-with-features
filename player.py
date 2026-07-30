@@ -20,7 +20,9 @@ class Player(CircleShape):
     def __init__(self, x: int, y: int, stamina, lives) -> None:
         super().__init__(x,y, PLAYER_RADIUS)
         self.rotation = 0
-        self.speed = 0
+        self.max_speed = PLAYER_SPEED
+        self.accel = 1
+        self.friction = 0.92
         self.useable_stamina = stamina
         self.color = BAR_COLOR
         self.__stamina = stamina
@@ -76,36 +78,63 @@ class Player(CircleShape):
     
     
     def update(self, dt: float) -> None:
+        self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
+        boost = False
+        self.accel *= self.friction
         keys = pygame.key.get_pressed()
+        
+        
+        # friction will multiply by percent e.g. 0.95 which decreases velocity(gradual speed)
         if keys:
+            if keys[pygame.K_LSHIFT] and keys[pygame.K_w] and self.useable_stamina > 0:
+                boost = True
+                self.useable_stamina -= 70 * dt
+            if boost:
+                self.accel += 20 
             if keys[pygame.K_w]:
-                self.move(dt)
+                self.accel += 20
             if keys[pygame.K_a]:
                 self.rotate(-dt)
             if keys[pygame.K_s]:
-                self.move(-dt)
+                self.accel -= 20
             if keys[pygame.K_d]:
                 self.rotate(dt)
             # create a faster acceleration sprint feature
-            if keys[pygame.K_LSHIFT] and keys[pygame.K_w] and self.useable_stamina > 0:
-                self.move(dt*1.2)
-                self.useable_stamina -= 80 * dt
-
-            # when shift is not pressed increase the stamina bar
-            elif not keys[pygame.K_LSHIFT]:
-                self.useable_stamina += 20 * dt
+            # create an animation that players behind the ship to make a bigger blast
+ 
+            # when boost equals False increase the stamina bar
+            if not boost:
+                self.useable_stamina += 40 * dt
+                
             # limits stamina by player stat
             if self.useable_stamina > self.__stamina:
                 self.useable_stamina = self.__stamina
-            
-        self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
-            
- 
-    
+        if boost:
+            self.max_speed = PLAYER_SPEED + 100
+        else:
+            self.max_speed = PLAYER_SPEED
+        
+        
+        # this limits the speed
+        if self.accel >= self.max_speed:
+            self.accel = self.max_speed
+        elif self.accel <= -self.max_speed:
+            self.accel = -self.max_speed
+
+        # to prevent negative scientific notation 
+        if abs(self.accel) <= 0.1:
+            self.accel = 0
+        if self.accel != 0:
+            self.move(dt)
+     
+        print(self.accel)
+        print(boost)
+        
+         
     def move(self, dt) -> None:
-        unit_vector = pygame.Vector2(0,1)
-        rotated_vector = unit_vector.rotate(self.rotation)
-        rotated_speed_vector = rotated_vector * PLAYER_SPEED * dt 
-        rotated_speed_vector_gradual = rotated_speed_vector
-        self.position += rotated_speed_vector_gradual
+  
+        unit_vector = pygame.Vector2(0,self.accel)
+        rotated_vector = unit_vector.rotate(self.rotation) 
+
+        self.position += rotated_vector * dt 
         

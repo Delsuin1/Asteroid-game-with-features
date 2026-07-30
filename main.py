@@ -72,7 +72,6 @@ def main():
                 
             # Visual elements must go after otherwise it will be overridden
             updatable.update(dt)
-            print(player.position)
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
