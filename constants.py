@@ -9,6 +9,7 @@ LINE_WIDTH = 2
 BOARDER_WIDTH = 4
 
 TEXT_FONT = pygame.font.Font("fonts/Pixeltype.ttf", 30)
+MENU_TEXT_FONT = pygame.font.Font("fonts/Pixeltype.ttf", 55)
 TEXT_COLOR = "#E9F5EF"
 BAR_COLOR = "#E9F5EF"
 

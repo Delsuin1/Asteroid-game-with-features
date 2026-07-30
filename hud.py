@@ -35,6 +35,7 @@ class Hud(RectShape):
         self.lives_hud(screen)
         screen.blit(score_text, score_text_rect)
         
+        
     
     def update(self, dt):
         pass

@@ -16,6 +16,7 @@ class Player(CircleShape):
     def __init__(self, x: int, y: int, stamina, lives) -> None:
         super().__init__(x,y, PLAYER_RADIUS)
         self.rotation = 0
+        self.speed = 0
         self.useable_stamina = stamina
         self.color = BAR_COLOR
         self.__stamina = stamina
@@ -73,10 +74,10 @@ class Player(CircleShape):
             if self.useable_stamina > self.__stamina:
                 self.useable_stamina = self.__stamina
             
-        
-            
+ 
+    
     def move(self, dt) -> None:
         unit_vector = pygame.Vector2(0,1)
         rotated_vector = unit_vector.rotate(self.rotation)
-        rotated_speed_vector = rotated_vector * PLAYER_SPEED * dt
+        rotated_speed_vector = rotated_vector * PLAYER_SPEED * dt 
         self.position += rotated_speed_vector

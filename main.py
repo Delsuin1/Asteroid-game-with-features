@@ -7,6 +7,7 @@ from hud import Hud
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from sys import exit as leave
+import random
 
 
 
@@ -19,9 +20,10 @@ def main():
     
     def draw_text(text, font, text_color, x, y):
         style = font.render(text, False, text_color)
-
+        screen.blit(style, (x,y))
     
-    draw_text("Press SPACE to start", TEXT_FONT, TEXT_COLOR, 100,400)
+    
+    
     
     pygame.init()
     pygame.display.set_caption("Asteroids", "A game about Asteroids!")
@@ -50,19 +52,30 @@ def main():
     hud = Hud(player)
   
    
+    explosions_path = ["explosions/explode.wav", "explosions/explodemini.wav"]
+    
     
     clock = pygame.time.Clock()
     dt = 0.0
     
     
+    
+   
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 leave()
-            if not game_active:
-                if event.type == pygame.KEYDOWN:
-                    game_active = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    game_active = False
+                    
+                    
+                    
+                if not game_active:
+                    if event.key == pygame.K_SPACE:
+                        game_active = True
+                    
         log_state()
                 
         if game_active:
@@ -72,11 +85,17 @@ def main():
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
-                    player.lives -= 1
                     # add immunity frames
                     player.last_collide_time = pygame.time.get_ticks() 
+                    # create destruction sound
+                    destruction_sound = pygame.mixer.Sound(random.choice(explosions_path))
+                    # reduce volume and timing of sound
+                    # could use destruction_sound.set_volume(0.2)
+                    destruction_sound.play(fade_ms = random.randint(800,1100))
+                    player.lives -= 1
                     
-                    # play an animation
+                    # play explosion animation 
+                    
                     player.position.x = x
                     player.position.y = y
                     
@@ -93,14 +112,20 @@ def main():
             screen.fill("black")
             screen.blit(background, background_rect)
             
+            
+            
             for drawables in drawable:
                 drawables.draw(screen)
                 
             pygame.display.flip()
             dt = clock.tick(60) / 1000
         else:
-            player.lives = PLAYER_LIVES
+            
             screen.blit(background, background_rect)
+            
+            draw_text("Press SPACE to start", MENU_TEXT_FONT, TEXT_COLOR, 400,300)
+            draw_text("Press Q to stop", MENU_TEXT_FONT, TEXT_COLOR, 450,350)
+            player.lives = PLAYER_LIVES
           
             
           
