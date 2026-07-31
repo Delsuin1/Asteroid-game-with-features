@@ -4,7 +4,7 @@ from collections.abc import Callable
 import pygame
 from asteroid import Asteroid
 from constants import *
-
+from images import asteroid_sprite_sheet
 Edge = tuple[pygame.Vector2, Callable[[float], pygame.Vector2]]
 
 
@@ -39,9 +39,9 @@ class AsteroidField(pygame.sprite.Sprite):
         self.spawn_timer = 0.0
 
     def spawn(
-        self, radius: float, position: pygame.Vector2, velocity: pygame.Vector2
+        self, radius: float, position: pygame.Vector2, velocity: pygame.Vector2, 
     ) -> None:
-        asteroid = Asteroid(position.x, position.y, radius)
+        asteroid = Asteroid(position.x, position.y, radius, asteroid_sprite_sheet, 8, 8)
         asteroid.velocity = velocity
 
     def update(self, dt: float) -> None:

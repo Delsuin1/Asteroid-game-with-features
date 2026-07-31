@@ -13,7 +13,7 @@ from constants import (
     TOP,
     BOTTOM,
 )
-from images import shield_image
+from images import *
 
 
 class Player(CircleShape):
@@ -65,7 +65,7 @@ class Player(CircleShape):
         player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
         if self.is_immune():
             self.color = "grey"
-            screen.blit(shield_image, shield_rect)
+            screen.blit(shield_image.convert_alpha(), shield_rect)
         else:
             self.color = BAR_COLOR
 
@@ -108,7 +108,7 @@ class Player(CircleShape):
                 self.useable_stamina += 40 * dt
                 
             # limits stamina by player stat
-            if self.useable_stamina > self.__stamina:
+            if self.useable_stamina >= self.__stamina:
                 self.useable_stamina = self.__stamina
         if boost:
             self.max_speed = PLAYER_SPEED + 100
@@ -127,9 +127,9 @@ class Player(CircleShape):
             self.accel = 0
         if self.accel != 0:
             self.move(dt)
-       
+
+            
     def move(self, dt) -> None:
-  
         unit_vector = pygame.Vector2(0,self.accel)
         rotated_vector = unit_vector.rotate(self.rotation) 
         self.position += rotated_vector * dt 
