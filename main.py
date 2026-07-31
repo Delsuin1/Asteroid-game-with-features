@@ -8,11 +8,11 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from sys import exit as leave
 import random
+from sounds import background_music
 
 
 
 def main():
-    game_active = False
     print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
@@ -20,22 +20,23 @@ def main():
     # move to menu module
     def draw_text(text, font, text_color, x, y):
         style = font.render(text, False, text_color)
-        screen.blit(style, (x,y))
+        style_rect = style.get_rect(center = (x,y))
+        screen.blit(style, style_rect)
     
     
     pygame.init()
     pygame.display.set_caption("Asteroids", "A game about Asteroids!")
-    
+    game_active = False
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     
-    
     updatable = pygame.sprite.Group()
-    
     drawable = pygame.sprite.Group()
-    
     asteroids = pygame.sprite.Group() 
-    
     gui = pygame.sprite.Group()
+    
+    bgm = pygame.mixer.music.load(background_music)
+    pygame.mixer.music.set_volume(0.14)
+    pygame.mixer.music.play(-1)
     
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
@@ -45,7 +46,12 @@ def main():
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
     hud = Hud(player)
-   
+    
+    def restart():
+        player = Player(X,Y, PLAYER_STAMINA, PLAYER_LIVES)
+        asteroid_field = AsteroidField()
+        hud = Hud(player)
+        return player, asteroid_field, hud
     explosions_path = ["explosions/explode.wav", "explosions/explodemini.wav"]
     
     
@@ -59,9 +65,12 @@ def main():
                 pygame.quit()
                 leave()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
-                    game_active = False
-                                    
+                if event.key == pygame.K_q or not game_active:
+                    updatable.empty() 
+                    drawable.empty()
+                    asteroids.empty()
+                    player, asteroid_field, hud = restart()
+                    game_active = False                 
                 if not game_active:
                     if event.key == pygame.K_SPACE:
                         game_active = True
@@ -69,7 +78,6 @@ def main():
         log_state()
                 
         if game_active:
-                
             # Visual elements must go after otherwise it will be overridden
             updatable.update(dt)
             for asteroid in asteroids:
@@ -88,37 +96,30 @@ def main():
                     
                     player.position.x = X
                     player.position.y = Y
-                    
-                    
-    
+
                     if player.lives <= 0:
                         print("Game Over!")
                         game_active = False
-            
-            # print("invulurnable if 1500ms ",pygame.time.get_ticks() - player.last_collide_time, player.is_immune())
-            # print(f"player lives: {player.lives}"
-            
+
 
             # Background images
             screen.fill("black")
             screen.blit(background, background_rect)
 
-            
             for drawables in drawable:
                 drawables.draw(screen)
                        
             pygame.display.flip()
             dt = clock.tick(60) / 1000
         else:
-            
             screen.blit(background, background_rect)
             
-            draw_text("Press SPACE to start", MENU_TEXT_FONT, TEXT_COLOR, 400,300)
-            draw_text("Press Q to stop", MENU_TEXT_FONT, TEXT_COLOR, 450,350)
+            draw_text("Press SPACE to start", MENU_TEXT_FONT, TEXT_COLOR, X,300)
+            draw_text("Press Q to stop", MENU_TEXT_FONT, TEXT_COLOR, X,350)
+            draw_text("YOUR SCORE", MENU_TEXT_FONT, TEXT_COLOR, 1024,150)
             player.lives = PLAYER_LIVES
           
             
-          
             pygame.display.flip()
             
             

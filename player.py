@@ -13,7 +13,7 @@ from constants import (
     TOP,
     BOTTOM,
 )
-
+from images import shield_image
 
 
 class Player(CircleShape):
@@ -43,7 +43,6 @@ class Player(CircleShape):
     
     
     def in_boundary(self, left, right, top, bottom):
-        
         # Example: If player x coor is more than the screens width(1280),
         # reduce the player's x coordinate by the screens width returning the player to the opposite side of the screen(left side).
         
@@ -61,9 +60,12 @@ class Player(CircleShape):
             self.position.y += bottom
         
     def draw(self, screen: pygame.Surface) -> None:
+        
+        shield_rect = shield_image.get_rect(center = self.position)
         player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
         if self.is_immune():
             self.color = "grey"
+            screen.blit(shield_image, shield_rect)
         else:
             self.color = BAR_COLOR
 
@@ -82,7 +84,6 @@ class Player(CircleShape):
         boost = False
         self.accel *= self.friction
         keys = pygame.key.get_pressed()
-        
         
         # friction will multiply by percent e.g. 0.95 which decreases velocity(gradual speed)
         if keys:
@@ -126,15 +127,10 @@ class Player(CircleShape):
             self.accel = 0
         if self.accel != 0:
             self.move(dt)
-     
-        print(self.accel)
-        print(boost)
-        
-         
+       
     def move(self, dt) -> None:
   
         unit_vector = pygame.Vector2(0,self.accel)
         rotated_vector = unit_vector.rotate(self.rotation) 
-
         self.position += rotated_vector * dt 
         

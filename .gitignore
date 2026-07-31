@@ -12,3 +12,4 @@ game_state.jsonl
 uv.lock
 .python-version
 game_events.jsonl
+*.Identifier
