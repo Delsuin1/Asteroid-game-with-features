@@ -1,3 +1,3 @@
-background_music = "./music/asteroid_bgm.wav"
+background_music = "audio/asteroid_bgm.wav"
 
 shot_path = [""]
