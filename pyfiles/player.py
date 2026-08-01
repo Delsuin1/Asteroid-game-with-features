@@ -71,6 +71,8 @@ class Player(CircleShape):
             self.frame = 0 
             return True
         return False
+    
+    
     def destroyed(self):
         explosions_path = ["audio/explode.wav", "audio/explodemini.wav"]
         # for imunnity frames
@@ -92,7 +94,8 @@ class Player(CircleShape):
         # player rotation resets to original
         self.rotation = 180
         
-
+        self.accel = 0
+        
         if self.lives <= 0:
             print("Game Over!")
             return False
@@ -106,15 +109,15 @@ class Player(CircleShape):
         screen.blit(self.explosion_sprite[int(self.frame)], self.explosion_rect.get_rect(center = (position)))
         
     
-    
     def draw(self, screen: pygame.Surface) -> None:
-        shield_rect = shield_image.get_rect(center = self.position)
-        player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
-        if self.is_immune():
-            self.color = "grey"
-            screen.blit(shield_image.convert_alpha(), shield_rect)
-        else:
-            self.color = BAR_COLOR
+        if self.alive:
+            shield_rect = shield_image.get_rect(center = self.position)
+            player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
+            if self.is_immune():
+                self.color = "grey"
+                screen.blit(shield_image.convert_alpha(), shield_rect)
+            else:
+                self.color = BAR_COLOR
             
     def is_immune(self):
         seconds = pygame.time.get_ticks() 
@@ -128,56 +131,59 @@ class Player(CircleShape):
     
     def update(self, dt: float) -> None:
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
-        
-        boost = False
-        self.accel *= self.friction
-        
-        keys = pygame.key.get_pressed()
-        
-        # friction will multiply by percent e.g. 0.95 which decreases velocity(gradual speed)
-        if keys:
-            if keys[pygame.K_LSHIFT] and keys[pygame.K_w] and self.useable_stamina > 0:
-                boost = True
-                self.useable_stamina -= 70 * dt
-            if boost:
-                self.accel += 10 
-            if keys[pygame.K_w]:
-                self.accel += 10
-            if keys[pygame.K_a]:
-                self.rotate(-dt)
-            if keys[pygame.K_s]:
-                self.accel -= 20
-            if keys[pygame.K_d]:
-                self.rotate(dt)
-            # create a faster acceleration sprint feature
-            # create an animation that players behind the ship to make a bigger blast
- 
-            # when boost equals False increase the stamina bar
-            if not boost:
-                self.useable_stamina += 40 * dt
-                
-            # limits stamina by player stat
-            if self.useable_stamina >= self.__stamina:
-                self.useable_stamina = self.__stamina
-        if boost:
-            self.max_speed = PLAYER_SPEED + 100
-        else:
-            self.max_speed = PLAYER_SPEED
-        
-        
-        # this limits the speed
-        if self.accel >= self.max_speed:
-            self.accel = self.max_speed
-        elif self.accel <= -self.max_speed:
-            self.accel = -self.max_speed
-
-        # to prevent negative scientific notation 
-        if abs(self.accel) <= 0.1:
-            self.accel = 0
-        if self.accel != 0:
-            self.move(dt)
-
+        if self.alive:
+            boost = False
+            self.accel *= self.friction
             
+            keys = pygame.key.get_pressed()
+            
+            # friction will multiply by percent e.g. 0.95 which decreases velocity(gradual speed)
+            if keys:
+                if self.useable_stamina >= 0 :
+                    if keys[pygame.K_LSHIFT] and keys[pygame.K_w]:
+                        boost = True
+                        self.useable_stamina -= 25 * dt
+                    if boost:
+                        self.accel += 10 
+                    if keys[pygame.K_w]:
+                        self.accel += 10
+                        self.useable_stamina -= 5 * dt
+                    if keys[pygame.K_a]:
+                        self.rotate(-dt)
+                    if keys[pygame.K_s]:
+                        self.accel -= 20
+                        self.useable_stamina -= 5 * dt
+                    if keys[pygame.K_d]:
+                        self.rotate(dt)
+                    # create a faster acceleration sprint feature
+                    # create an animation that players behind the ship to make a bigger blast
+
+                    # when boost equals False increase the stamina bar
+            if not boost:
+                self.useable_stamina += 20 * dt
+                    
+                # limits stamina by player stat
+                if self.useable_stamina >= self.__stamina:
+                    self.useable_stamina = self.__stamina
+            if boost:
+                self.max_speed = PLAYER_SPEED + 100
+            else:
+                self.max_speed = PLAYER_SPEED
+            
+            
+            # this limits the speed
+            if self.accel >= self.max_speed:
+                self.accel = self.max_speed
+            elif self.accel <= -self.max_speed:
+                self.accel = -self.max_speed
+
+            # to prevent negative scientific notation 
+            if abs(self.accel) <= 0.1:
+                self.accel = 0
+            if self.accel != 0:
+                self.move(dt)
+
+                
     def move(self, dt) -> None:
         unit_vector = pygame.Vector2(0,self.accel)
         rotated_vector = unit_vector.rotate(self.rotation) 
