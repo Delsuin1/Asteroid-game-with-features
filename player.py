@@ -21,16 +21,15 @@ class Player(CircleShape):
         super().__init__(x,y, PLAYER_RADIUS)
         self.rotation = 0
         self.max_speed = PLAYER_SPEED
-        self.accel = 1
-        self.friction = 0.92
+        self.accel = 0
+        self.friction = 0.96
         self.useable_stamina = stamina
         self.color = BAR_COLOR
         self.__stamina = stamina
         self.lives = lives
         self.last_collide_time = 0
         self.immunity_duration = PLAYER_IMMUNITY_DURATION
-        
-
+        self.explosion_sprite, self.explosion_rect = get_sprite_sheet(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position)
         
         # in the Player class
     def triangle(self) -> list[pygame.Vector2]:
@@ -58,9 +57,25 @@ class Player(CircleShape):
             self.position.y -= bottom
         elif self.position.y < top:
             self.position.y += bottom
-        
+
+    def get_frame(self, images, dt):
+        if self.frame <= len(images):
+            self.frame += -24 * dt
+            print(self.frame)
+        if self.frame <= -len(images):
+            self.frame = 0 
+            return True
+        return False
+    
+    
+    def shot_animation(self, screen, dt, position, alive=False):
+        if not alive:
+            alive = self.get_frame(self.explosion_sprite, dt)
+            screen.blit(self.explosion_sprite[int(self.frame)], self.explosion_rect.get_rect(center = (position)))
+        return alive
+    
+    
     def draw(self, screen: pygame.Surface) -> None:
-        
         shield_rect = shield_image.get_rect(center = self.position)
         player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
         if self.is_immune():
@@ -68,7 +83,7 @@ class Player(CircleShape):
             screen.blit(shield_image.convert_alpha(), shield_rect)
         else:
             self.color = BAR_COLOR
-
+            
     def is_immune(self):
         seconds = pygame.time.get_ticks() 
         if seconds - self.last_collide_time < self.immunity_duration:
@@ -81,8 +96,10 @@ class Player(CircleShape):
     
     def update(self, dt: float) -> None:
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
+        
         boost = False
         self.accel *= self.friction
+        
         keys = pygame.key.get_pressed()
         
         # friction will multiply by percent e.g. 0.95 which decreases velocity(gradual speed)
@@ -91,9 +108,9 @@ class Player(CircleShape):
                 boost = True
                 self.useable_stamina -= 70 * dt
             if boost:
-                self.accel += 20 
+                self.accel += 10 
             if keys[pygame.K_w]:
-                self.accel += 20
+                self.accel += 10
             if keys[pygame.K_a]:
                 self.rotate(-dt)
             if keys[pygame.K_s]:

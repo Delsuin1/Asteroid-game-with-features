@@ -53,12 +53,14 @@ def main():
         hud = Hud(player)
         return player, asteroid_field, hud
     explosions_path = ["explosions/explode.wav", "explosions/explodemini.wav"]
-    current_frame = 0
-    frame_counter = 0
+
+    collide_position = [0,0]
     
     clock = pygame.time.Clock()
     dt = 0.0
-   
+    
+    alive = True
+    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -70,7 +72,7 @@ def main():
                     drawable.empty()
                     asteroids.empty()
                     player, asteroid_field, hud = restart()
-                    game_active = False                 
+                                     
                 if not game_active:
                     if event.key == pygame.K_SPACE:
                         game_active = True
@@ -79,7 +81,20 @@ def main():
                 
         if game_active:
             # Visual elements must go after otherwise it will be overridden
+
+
+            # Background images
+            screen.fill("black")
+            backgrounds = pygame.transform.rotozoom(background, int(player.useable_stamina) * dt, 1)
+            screen.blit(backgrounds, background_rect)
+                
+            
             updatable.update(dt)
+            alive = player.shot_animation(screen, dt, collide_position, alive)
+
+            for drawables in drawable:
+                drawables.draw(screen)
+
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
@@ -89,35 +104,25 @@ def main():
                     destruction_sound = pygame.mixer.Sound(random.choice(explosions_path))
                     # reduce volume and timing of sound
                     # could use destruction_sound.set_volume(0.2)
+                    
                     destruction_sound.play(fade_ms = random.randint(1000,1100))
                     player.lives -= 1
                     
                     # play explosion animation 
-                    
+                    collide_position = player.position.x, player.position.y
+                    alive = False
                     player.position.x = X
                     player.position.y = Y
+                    
 
                     if player.lives <= 0:
                         print("Game Over!")
                         game_active = False
 
-
-            # Background images
-            screen.fill("black")
-            backgrounds = pygame.transform.rotozoom(background, int(player.useable_stamina) * dt, 1)
-            screen.blit(backgrounds, background_rect)
-            frame_speed = 15
             
-            frame_counter += 1
-            if frame_counter >= frame_speed:
-                current_frame += 1
-
-            for drawables in drawable:
-                drawables.draw(screen)
                        
             pygame.display.flip()
             dt = clock.tick(60) / 1000
-            print(dt)
         else:
             screen.blit(background, background_rect)
             

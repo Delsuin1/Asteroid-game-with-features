@@ -10,8 +10,9 @@ background_rect = background.get_rect(center = (X, Y))
 shield = pygame.image.load("shield.png").convert_alpha()
 shield_image = pygame.transform.rotozoom(shield, 0, 0.4)
 asteroid_sprite_sheet = pygame.image.load("AsteroidAnimation.png").convert_alpha()
+explosion_sprite_sheet = pygame.image.load("fx/particlefx_14.png")
 
-def get_sprite_sheet(sprite_sheet, num_col, num_rows, radius, position):
+def get_sprite_sheet(sprite_sheet, num_col, num_rows, radius, position, rotation=0):
         sheet_width, sheet_height = sprite_sheet.get_size()
         asteroid_frame_width = sheet_width // num_col
         asteroid_frame_height = sheet_height // num_rows
@@ -28,7 +29,7 @@ def get_sprite_sheet(sprite_sheet, num_col, num_rows, radius, position):
                     asteroid_frame_height
                 )
                 frame = sprite_sheet.subsurface(rect)
-                resized_frame = pygame.transform.scale_by(frame,radius)
+                resized_frame = pygame.transform.rotozoom(frame,rotation,radius)
                 
                 asteroid_frame.append(resized_frame)
         return asteroid_frame, resized_frame
