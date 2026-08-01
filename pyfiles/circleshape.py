@@ -11,7 +11,7 @@ class CircleShape(pygame.sprite.Sprite):
             super().__init__(*self.containers)
         else:
             super().__init__()
-
+        self.alive = True
         self.position: pygame.Vector2 = pygame.Vector2(x, y)
         self.velocity = pygame.Vector2(0, 2)
         self.radius = radius

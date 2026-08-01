@@ -46,20 +46,21 @@ def main():
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
     hud = Hud(player)
+
+                
+            
     
     def restart():
         player = Player(X,Y, PLAYER_STAMINA, PLAYER_LIVES)
         asteroid_field = AsteroidField()
         hud = Hud(player)
         return player, asteroid_field, hud
-    explosions_path = ["audio/explode.wav", "audio/explodemini.wav"]
+    
 
     collide_position = [0,0]
     
     clock = pygame.time.Clock()
     dt = 0.0
-    
-    alive = True
     
     while True:
         for event in pygame.event.get():
@@ -67,18 +68,22 @@ def main():
                 pygame.quit()
                 leave()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q or not game_active:
-                    updatable.empty() 
-                    drawable.empty()
-                    asteroids.empty()
-                    player, asteroid_field, hud = restart()
+                if event.key == pygame.K_q:
+                    game_active = False
+                if event.key == pygame.K_t:
+                    player.destroyed() 
+                    
+                                     
                                      
                 if not game_active:
                     if event.key == pygame.K_SPACE:
+                        updatable.empty() 
+                        drawable.empty()
+                        asteroids.empty()
+                        player, asteroid_field, hud = restart()
                         game_active = True
                     
         log_state()
-                
         if game_active:
             # Visual elements must go after otherwise it will be overridden
 
@@ -90,7 +95,7 @@ def main():
                 
             
             updatable.update(dt)
-            alive = player.shot_animation(screen, dt, collide_position, alive)
+            player.shot_animation(screen, dt, collide_position)
 
             for drawables in drawable:
                 drawables.draw(screen)
@@ -98,28 +103,9 @@ def main():
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
-                    # add immunity frames
-                    player.last_collide_time = pygame.time.get_ticks() 
-                    # create destruction sound
-                    destruction_sound = pygame.mixer.Sound(random.choice(explosions_path))
-                    # reduce volume and timing of sound
-                    # could use destruction_sound.set_volume(0.2)
-                    
-                    destruction_sound.play(fade_ms = random.randint(1000,1100))
-                    player.lives -= 1
-                    
-                    # play explosion animation 
                     collide_position = player.position.x, player.position.y
-                    alive = False
-                    player.position.x = X
-                    player.position.y = Y
-                    
+                    game_active = player.destroyed()
 
-                    if player.lives <= 0:
-                        print("Game Over!")
-                        game_active = False
-
-            
                        
             pygame.display.flip()
             dt = clock.tick(60) / 1000

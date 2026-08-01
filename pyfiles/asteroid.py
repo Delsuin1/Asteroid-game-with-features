@@ -1,14 +1,15 @@
 import pygame
 from pyfiles.circleshape import CircleShape
 from pyfiles.constants import LINE_WIDTH
-from pyfiles.images import get_sprite_sheet, asteroid_sprite_sheet
+from pyfiles.images import asteroid_sprite_sheet
+from pyfiles.animate import animate
 
 
 class Asteroid(CircleShape):
     def __init__(self, x: float, y: float, radius: float) -> None:
         super().__init__(x, y, radius)
         self.frame = 0
-        self.asteroid_sprite, self.asteroid_rect = get_sprite_sheet(asteroid_sprite_sheet, 8,8, self.radius*0.033, self.position)
+        self.asteroid_sprite, self.asteroid_rect = animate(asteroid_sprite_sheet, 8,8, self.radius*0.033, self.position,  5,5)
         self.asteroid_frame = 0
         
         

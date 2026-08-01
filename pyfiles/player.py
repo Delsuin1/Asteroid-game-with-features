@@ -1,6 +1,8 @@
 import pygame
 from pyfiles.circleshape import CircleShape
 from pyfiles.images import *
+from pyfiles.animate import animate
+import random
 from pyfiles.constants import (
     PLAYER_RADIUS, 
     LINE_WIDTH, 
@@ -19,7 +21,7 @@ from pyfiles.constants import (
 class Player(CircleShape):
     def __init__(self, x: int, y: int, stamina, lives) -> None:
         super().__init__(x,y, PLAYER_RADIUS)
-        self.rotation = 0
+        self.rotation = 180
         self.max_speed = PLAYER_SPEED
         self.accel = 0
         self.friction = 0.96
@@ -29,7 +31,8 @@ class Player(CircleShape):
         self.lives = lives
         self.last_collide_time = 0
         self.immunity_duration = PLAYER_IMMUNITY_DURATION
-        self.explosion_sprite, self.explosion_rect = get_sprite_sheet(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position)
+        # results of animate file stuff
+        self.explosion_sprite, self.explosion_rect = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position ,4 ,5)
         
         # in the Player class
     def triangle(self) -> list[pygame.Vector2]:
@@ -59,20 +62,49 @@ class Player(CircleShape):
             self.position.y += bottom
 
     def get_frame(self, images, dt):
+       
         if self.frame <= len(images):
-            self.frame += -24 * dt
+            self.frame -= 14 * dt
             print(self.frame)
-        if self.frame <= -len(images):
+           
+        if self.frame <= -len(images) or self.frame >= len(images):
             self.frame = 0 
             return True
         return False
+    def destroyed(self):
+        explosions_path = ["audio/explode.wav", "audio/explodemini.wav"]
+        # for imunnity frames
+        self.last_collide_time = pygame.time.get_ticks() 
+        # create destruction sound
+        # find out how to reduce volume and change timing of sound
+        destruction_sound = pygame.mixer.Sound(random.choice(explosions_path))
+        # could use destruction_sound.set_volume(0.2)
+        destruction_sound.play(fade_ms = random.randint(1000,1100))
+        self.lives -= 1
+        
+        # play explosion animation 
+        
+        self.alive = False
+        # Returns player to center
+        self.position.x = X
+        # Don't know why but I need to separate the x,y values otherwise the boundaries will bring up an error
+        self.position.y = Y
+        # player rotation resets to original
+        self.rotation = 180
+        
+
+        if self.lives <= 0:
+            print("Game Over!")
+            return False
+        # return True or False for game_active: bool variable
+        return True
+
     
-    
-    def shot_animation(self, screen, dt, position, alive=False):
-        if not alive:
-            alive = self.get_frame(self.explosion_sprite, dt)
-            screen.blit(self.explosion_sprite[int(self.frame)], self.explosion_rect.get_rect(center = (position)))
-        return alive
+    def shot_animation(self, screen, dt, position):
+        if not self.alive:
+            self.alive = self.get_frame(self.explosion_sprite, dt)
+        screen.blit(self.explosion_sprite[int(self.frame)], self.explosion_rect.get_rect(center = (position)))
+        
     
     
     def draw(self, screen: pygame.Surface) -> None:
