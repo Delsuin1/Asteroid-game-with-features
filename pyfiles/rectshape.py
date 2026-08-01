@@ -1,5 +1,5 @@
 import pygame
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from pyfiles.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 class RectShape(pygame.sprite.Sprite):
     containers: tuple[pygame.sprite.Group, ...]
     

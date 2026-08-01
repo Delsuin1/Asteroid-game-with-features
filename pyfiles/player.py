@@ -1,6 +1,7 @@
 import pygame
-from circleshape import CircleShape
-from constants import (
+from pyfiles.circleshape import CircleShape
+from pyfiles.images import *
+from pyfiles.constants import (
     PLAYER_RADIUS, 
     LINE_WIDTH, 
     BOARDER_WIDTH,
@@ -13,7 +14,6 @@ from constants import (
     TOP,
     BOTTOM,
 )
-from images import *
 
 
 class Player(CircleShape):

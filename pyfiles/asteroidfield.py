@@ -2,9 +2,9 @@ import random
 from collections.abc import Callable
 
 import pygame
-from asteroid import Asteroid
-from constants import *
-from images import asteroid_sprite_sheet
+from pyfiles.asteroid import Asteroid
+from pyfiles.constants import *
+from pyfiles.images import asteroid_sprite_sheet
 Edge = tuple[pygame.Vector2, Callable[[float], pygame.Vector2]]
 
 

@@ -1,7 +1,7 @@
 import pygame
-from rectshape import RectShape
-from text import stamina_text, stamina_text_rect, score_text, score_text_rect
-from constants import BAR_COLOR, BOARDER_WIDTH, LINE_WIDTH
+from pyfiles.rectshape import RectShape
+from pyfiles.text import stamina_text, stamina_text_rect, score_text, score_text_rect
+from pyfiles.constants import BAR_COLOR, BOARDER_WIDTH, LINE_WIDTH
 
 
 class Hud(RectShape):

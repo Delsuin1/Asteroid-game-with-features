@@ -1,14 +1,14 @@
 import pygame
-from constants import *
-from logger import log_state, log_event
-from images import *
-from player import Player
-from hud import Hud
-from asteroid import Asteroid
-from asteroidfield import AsteroidField
+from pyfiles.images import *
+from pyfiles.constants import *
+from pyfiles.logger import log_state, log_event
+from pyfiles.player import Player as Player
+from pyfiles.hud import Hud
+from pyfiles.asteroid import Asteroid
+from pyfiles.asteroidfield import AsteroidField
+from pyfiles.sounds import background_music
 from sys import exit as leave
 import random
-from sounds import background_music
 
 
 
@@ -52,7 +52,7 @@ def main():
         asteroid_field = AsteroidField()
         hud = Hud(player)
         return player, asteroid_field, hud
-    explosions_path = ["explosions/explode.wav", "explosions/explodemini.wav"]
+    explosions_path = ["audio/explode.wav", "audio/explodemini.wav"]
 
     collide_position = [0,0]
     

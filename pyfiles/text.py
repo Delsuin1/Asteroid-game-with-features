@@ -1,6 +1,6 @@
 import pygame
 pygame.init()
-from constants import TEXT_FONT as text_font, TEXT_COLOR
+from pyfiles.constants import TEXT_FONT as text_font, TEXT_COLOR
 
 
 stamina_text = text_font.render("Stamina", False, TEXT_COLOR)

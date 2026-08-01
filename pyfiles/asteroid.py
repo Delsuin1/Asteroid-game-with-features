@@ -1,7 +1,7 @@
 import pygame
 from pyfiles.circleshape import CircleShape
 from pyfiles.constants import LINE_WIDTH
-from images import get_sprite_sheet, asteroid_sprite_sheet
+from pyfiles.images import get_sprite_sheet, asteroid_sprite_sheet
 
 
 class Asteroid(CircleShape):

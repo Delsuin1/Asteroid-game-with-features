@@ -1,5 +1,5 @@
 import pygame
-from constants import X, Y, SCREEN_WIDTH, SCREEN_HEIGHT
+from pyfiles.constants import X, Y, SCREEN_WIDTH, SCREEN_HEIGHT
 pygame.init()
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 def convert(image):
