@@ -32,8 +32,8 @@ class Player(CircleShape):
         self.last_collide_time = 0
         self.immunity_duration = PLAYER_IMMUNITY_DURATION
         # results of animate file stuff
-        self.explosion_sprite1, explosion_sprite1_rect = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 4 ,5)
-        self.explosion_sprite2, explosion_sprite2_rect  = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 4 ,5)
+        self.explosion_sprite1, self.explosion_sprite1_rect = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 4 , 5)
+        self.explosion_sprite2, self.explosion_sprite2_rect  = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 3 , 6)
         
         self.frame2 = 0
         # in the Player class
@@ -75,7 +75,7 @@ class Player(CircleShape):
 
     def get_frame2(self, images, dt, alive=True):
         if self.frame2 <= len(images):
-            self.frame2 -= 14 * dt
+            self.frame2 -= 16 * dt
             print(self.frame2)
            
         if self.frame2 <= -len(images):
@@ -117,16 +117,16 @@ class Player(CircleShape):
     
         if not self.alive:
             self.alive = self.get_frame1(self.explosion_sprite1, dt)
-            screen.blit(self.explosion_sprite1[int(self.frame)], self.position)
+            screen.blit(self.explosion_sprite1[int(self.frame)], self.explosion_sprite1_rect.get_rect(center = position))
         if self.frame == 0.1:
             alive = self.get_frame2(self.explosion_sprite2, dt)
-            screen.blit(self.explosion_sprite2[int(-self.frame2)], (X,Y))
+            screen.blit(self.explosion_sprite2[int(-self.frame2)], self.explosion_sprite2_rect.get_rect(center = (X,Y)))
             
             
         
     
     def draw(self, screen: pygame.Surface) -> None:
-        if self.alive:
+        if self.alive and self.frame == 0:
             shield_rect = shield_image.get_rect(center = self.position)
             player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
             if self.is_immune():
@@ -147,7 +147,7 @@ class Player(CircleShape):
     
     def update(self, dt: float) -> None:
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
-        if self.alive:
+        if self.alive and self.frame == 0:
             boost = False
             self.accel *= self.friction
             
