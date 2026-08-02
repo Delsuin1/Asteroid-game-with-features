@@ -41,7 +41,7 @@ def main():
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
     Player.containers = (updatable, drawable)
-    Hud.containers = (gui, updatable, drawable)
+    Hud.containers = (gui)
 
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
@@ -96,14 +96,15 @@ def main():
             
             player.shot_animation(screen, dt, collide_position)
                 
-            for drawables in drawable:
-                drawables.draw(screen)
 
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
+                    
                     collide_position = player.position.x, player.position.y
-                    game_active = player.destroyed()
+                    game_active = player.destroyed(game_active)
+            for drawables in drawable:
+                drawables.draw(screen)
 
                        
             pygame.display.flip()

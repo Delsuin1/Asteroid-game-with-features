@@ -33,8 +33,9 @@ class Player(CircleShape):
         self.immunity_duration = PLAYER_IMMUNITY_DURATION
         # results of animate file stuff
         self.explosion_sprite1, self.explosion_sprite1_rect = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 4 , 5)
-        self.explosion_sprite2, self.explosion_sprite2_rect  = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 3 , 6)
-        
+        self.explosion_sprite2, self.explosion_sprite2_rect  = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 3 , 7)
+        self.teleport_sound = pygame.mixer.Sound(random.choice(["audio/teleport.wav", "audio/teleport.wav"]))
+        self.destruction_sound = pygame.mixer.Sound(random.choice(["audio/explode.wav", "audio/explodemini.wav"]))
         self.frame2 = 0
         # in the Player class
     def triangle(self) -> list[pygame.Vector2]:
@@ -63,53 +64,55 @@ class Player(CircleShape):
         elif self.position.y < top:
             self.position.y += bottom
 
-    def get_frame1(self, images, dt, alive=True):
+    def get_frame1(self, images, dt):
         if self.frame <= len(images):
             self.frame -= 14 * dt
           
           
         if self.frame <= -len(images) or self.frame >= len(images):
             self.frame = 0.1
+            self.teleport_sound.play(fade_ms = random.randint(1100,1200))
             return True
         return False
 
-    def get_frame2(self, images, dt, alive=True):
+    def get_frame2(self, images, dt):
         if self.frame2 <= len(images):
-            self.frame2 -= 16 * dt
-
-           
+            self.frame2 -= 15 * dt
+            
         if self.frame2 <= -len(images):
             self.frame2 = 0 
             self.frame = 0
 
     
-    def destroyed(self):
-        explosions_path = ["audio/explode.wav", "audio/explodemini.wav"]
-        # for imunnity frames
-        self.last_collide_time = pygame.time.get_ticks() 
-        # create destruction sound
-        # find out how to reduce volume and change timing of sound
-        destruction_sound = pygame.mixer.Sound(random.choice(explosions_path))
-        # could use destruction_sound.set_volume(0.2)
-        destruction_sound.play(fade_ms = random.randint(1000,1100))
-        self.lives -= 1
-        
-        # play explosion animation 
-        
-        self.alive = False
-        # Returns player to center
-        self.position.x = X
-        # Don't know why but I need to separate the x,y values otherwise the boundaries will bring up an error
-        self.position.y = Y
-        # player rotation resets to original
-        self.rotation = 180
-        
-        self.accel = 0
-        
-        if self.lives <= 0:
-            print("Game Over!")
-            return False
-        # return True or False for game_active: bool variable
+    def destroyed(self, game_active):
+        if game_active:
+            
+            # for imunnity frames
+            self.last_collide_time = pygame.time.get_ticks() 
+            # create destruction sound
+            # find out how to reduce volume and change timing of sound
+            self.alive = False
+            # could use teleport_sound.set_volume(0.2)
+            self.lives -= 1
+            
+            # play explosion animation 
+                
+            # Returns player to center
+            self.position.x = X
+            # Don't know why but I need to separate the x,y values otherwise the boundaries will bring up an error
+            self.position.y = Y
+            # player rotation resets to original
+            self.rotation = 180
+            
+            self.accel = 0
+            
+            if self.lives <= 0:
+                print("Game Over!")
+                self.destruction_sound.play(fade_ms = random.randint(1100,1200))
+                return False
+            else:
+                self.teleport_sound.play(fade_ms = random.randint(1100,1200))
+            # return True or False for game_active: bool variable
         return True
 
     
@@ -126,7 +129,7 @@ class Player(CircleShape):
         
     
     def draw(self, screen: pygame.Surface) -> None:
-        if self.alive and self.frame == 0:
+        if self.alive and self.frame2 == 0:
             shield_rect = shield_image.get_rect(center = self.position)
             player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
             if self.is_immune():
