@@ -1,6 +1,6 @@
 import pygame
 from pyfiles.rectshape import RectShape
-from pyfiles.text import stamina_text, stamina_text_rect, score_text, score_text_rect
+from pyfiles.text import fuel_text, fuel_text_rect, score_text, score_text_rect
 from pyfiles.constants import BAR_COLOR, BOARDER_WIDTH, LINE_WIDTH
 
 
@@ -11,19 +11,21 @@ class Hud(RectShape):
         self.player = player
     
 
-    def stamina_hud(self, screen):
-        screen.blit(stamina_text, stamina_text_rect)
+    def fuel_hud(self, screen):
+        screen.blit(fuel_text, fuel_text_rect)
         current_stamina = self.player.useable_stamina
         
-        pygame.draw.rect(screen, "grey", (50,30,current_stamina,30))
+        pygame.draw.rect(screen, "grey", (30,500, 30, current_stamina*2))
         # stamina_boarder
-        pygame.draw.rect(screen, "Blue", (50,30,100,30), BOARDER_WIDTH)
+        pygame.draw.rect(screen, "Blue", (30,500,30, 200), 3)
+        
+        
     def lives_hud(self,screen):
         gap = 50
         # (width,height)
-        left = (165, 130)  
-        middle = (180,90) 
-        right = (195,130)
+        left = (165, 130 * 5)  
+        middle = (180,90 * 6.7) 
+        right = ((195,130 * 5))
    
         for i in range(self.player.lives):
             triangle = [(left[0] + gap * i, left[1]), (middle[0] + gap * i, middle[1]), (right[0] + gap * i, right[1])]
@@ -31,7 +33,7 @@ class Hud(RectShape):
         
         
     def draw(self, screen):
-        self.stamina_hud(screen)
+        self.fuel_hud(screen)
         self.lives_hud(screen)
         screen.blit(score_text, score_text_rect)
         

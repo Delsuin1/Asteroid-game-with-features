@@ -1,13 +1,15 @@
 import pygame
 pygame.init()
-from pyfiles.constants import TEXT_FONT as text_font, TEXT_COLOR
+from pyfiles.constants import TEXT_FONT as text_font, TEXT_COLOR, MENU_TEXT_FONT
 
 
-stamina_text = text_font.render("Stamina", False, TEXT_COLOR)
-stamina_text_rect = stamina_text.get_rect(center = (100,20))
+fuel_text = MENU_TEXT_FONT.render("FUEL", False, TEXT_COLOR)
+fuel_text = pygame.transform.rotate(fuel_text, 90)
+fuel_text_rect = fuel_text.get_rect(center = (100,600))
 
-score_text = text_font.render(f"Score: ", False, TEXT_COLOR)
-score_text_rect = score_text.get_rect(center = (100, 80))
+
+score_text = MENU_TEXT_FONT.render(f"Lives", False, TEXT_COLOR)
+score_text_rect = score_text.get_rect(center = (235, 680))
 
 
 

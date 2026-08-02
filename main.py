@@ -57,7 +57,7 @@ def main():
         return player, asteroid_field, hud
     
 
-    collide_position = [0,0]
+    collide_position = [X,Y]
     
     clock = pygame.time.Clock()
     dt = 0.0
@@ -71,7 +71,7 @@ def main():
                 if event.key == pygame.K_q:
                     game_active = False
                 if event.key == pygame.K_t:
-                    player.destroyed() 
+                    player.alive = False
                     
                                      
                                      
@@ -89,14 +89,13 @@ def main():
 
 
             # Background images
+            updatable.update(dt)
             screen.fill("black")
             backgrounds = pygame.transform.rotozoom(background, int(player.useable_stamina) * dt, 1)
             screen.blit(backgrounds, background_rect)
-                
             
-            updatable.update(dt)
             player.shot_animation(screen, dt, collide_position)
-
+                
             for drawables in drawable:
                 drawables.draw(screen)
 
