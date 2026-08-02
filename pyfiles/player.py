@@ -66,8 +66,8 @@ class Player(CircleShape):
     def get_frame1(self, images, dt, alive=True):
         if self.frame <= len(images):
             self.frame -= 14 * dt
-            print(self.frame)
-           
+          
+          
         if self.frame <= -len(images) or self.frame >= len(images):
             self.frame = 0.1
             return True
@@ -76,7 +76,7 @@ class Player(CircleShape):
     def get_frame2(self, images, dt, alive=True):
         if self.frame2 <= len(images):
             self.frame2 -= 16 * dt
-            print(self.frame2)
+
            
         if self.frame2 <= -len(images):
             self.frame2 = 0 
@@ -136,8 +136,9 @@ class Player(CircleShape):
                 self.color = BAR_COLOR
             
     def is_immune(self):
-        seconds = pygame.time.get_ticks() 
-        if seconds - self.last_collide_time < self.immunity_duration:
+        delay = 3000
+        seconds = pygame.time.get_ticks()
+        if seconds - self.last_collide_time - delay < self.immunity_duration and not seconds < 5000:
             return True
         return False
     

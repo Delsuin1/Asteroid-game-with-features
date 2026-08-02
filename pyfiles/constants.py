@@ -23,7 +23,7 @@ PLAYER_SPEED = 200
 PLAYER_STAMINA = 100
 PLAYER_LIVES = 3
 # has to double for destroy() to allow proper duration of 1.5 seconds
-PLAYER_IMMUNITY_DURATION = 3000
+PLAYER_IMMUNITY_DURATION = 1500
 
 X = SCREEN_WIDTH / 2
 Y = SCREEN_HEIGHT / 2
