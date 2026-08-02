@@ -32,8 +32,10 @@ class Player(CircleShape):
         self.last_collide_time = 0
         self.immunity_duration = PLAYER_IMMUNITY_DURATION
         # results of animate file stuff
-        self.explosion_sprite, self.explosion_rect = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position ,4 ,5)
+        self.explosion_sprite1, explosion_sprite1_rect = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 4 ,5)
+        self.explosion_sprite2, explosion_sprite2_rect  = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 4 ,5)
         
+        self.frame2 = 0
         # in the Player class
     def triangle(self) -> list[pygame.Vector2]:
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -61,17 +63,25 @@ class Player(CircleShape):
         elif self.position.y < top:
             self.position.y += bottom
 
-    def get_frame(self, images, dt):
-       
+    def get_frame1(self, images, dt, alive=True):
         if self.frame <= len(images):
             self.frame -= 14 * dt
             print(self.frame)
            
         if self.frame <= -len(images) or self.frame >= len(images):
-            self.frame = 0 
+            self.frame = 0.1
             return True
         return False
-    
+
+    def get_frame2(self, images, dt, alive=True):
+        if self.frame2 <= len(images):
+            self.frame2 -= 14 * dt
+            print(self.frame2)
+           
+        if self.frame2 <= -len(images):
+            self.frame2 = 0 
+            self.frame = 0
+
     
     def destroyed(self):
         explosions_path = ["audio/explode.wav", "audio/explodemini.wav"]
@@ -104,9 +114,15 @@ class Player(CircleShape):
 
     
     def shot_animation(self, screen, dt, position):
+    
         if not self.alive:
-            self.alive = self.get_frame(self.explosion_sprite, dt)
-        screen.blit(self.explosion_sprite[int(self.frame)], self.explosion_rect.get_rect(center = (position)))
+            self.alive = self.get_frame1(self.explosion_sprite1, dt)
+            screen.blit(self.explosion_sprite1[int(self.frame)], self.position)
+        if self.frame == 0.1:
+            alive = self.get_frame2(self.explosion_sprite2, dt)
+            screen.blit(self.explosion_sprite2[int(-self.frame2)], (X,Y))
+            
+            
         
     
     def draw(self, screen: pygame.Surface) -> None:
