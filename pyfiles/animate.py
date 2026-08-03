@@ -1,6 +1,6 @@
 import pygame
-
-def animate(sprite_sheet, num_col, num_rows, radius, position, start_row, start_col, rotation=0):
+# position default = 0
+def animate(sprite_sheet, num_col, num_rows, radius, start_row, start_col, rotation=0):
         sheet_width, sheet_height = sprite_sheet.get_size()
         frame_width = sheet_width // num_col
         frame_height = sheet_height // num_rows

@@ -2,6 +2,7 @@ import pygame
 from pyfiles.circleshape import CircleShape
 from pyfiles.images import *
 from pyfiles.animate import animate
+from pyfiles.sounds import *
 import random
 from pyfiles.constants import (
     PLAYER_RADIUS, 
@@ -21,23 +22,19 @@ from pyfiles.constants import (
 class Player(CircleShape):
     def __init__(self, x: int, y: int, stamina, lives) -> None:
         super().__init__(x,y, PLAYER_RADIUS)
+        self.__max_speed = PLAYER_SPEED
+        self.__stamina = stamina
         self.rotation = 180
-        self.max_speed = PLAYER_SPEED
         self.accel = 0
-        self.friction = 0.96
         self.useable_stamina = stamina
         self.color = BAR_COLOR
-        self.__stamina = stamina
         self.lives = lives
         self.last_collide_time = 0
-        self.immunity_duration = PLAYER_IMMUNITY_DURATION
         # results of animate file stuff
-        self.explosion_sprite1, self.explosion_sprite1_rect = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 4 , 5)
-        self.explosion_sprite2, self.explosion_sprite2_rect  = animate(explosion_sprite_sheet, 8,8, self.radius*0.05, self.position, 3 , 7)
-        self.teleport_sound = pygame.mixer.Sound(random.choice(["audio/teleport.wav", "audio/teleport.wav"]))
-        self.destruction_sound = pygame.mixer.Sound(random.choice(["audio/explode.wav", "audio/explodemini.wav"]))
         self.frame2 = 0
         # in the Player class
+        
+        
     def triangle(self) -> list[pygame.Vector2]:
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
@@ -71,7 +68,7 @@ class Player(CircleShape):
           
         if self.frame <= -len(images) or self.frame >= len(images):
             self.frame = 0.1
-            self.teleport_sound.play(fade_ms = random.randint(1100,1200))
+            teleport_sound.play(fade_ms = random.randint(1100,1200))
             return True
         return False
 
@@ -109,10 +106,10 @@ class Player(CircleShape):
             
             if self.lives <= 0:
                 print("Game Over!")
-                self.destruction_sound.play(fade_ms = random.randint(1100,1200))
+                destruction_sound.play(fade_ms = random.randint(1100,1200))
                 return False
             else:
-                self.teleport_sound.play(fade_ms = random.randint(1100,1200))
+                teleport_sound.play(fade_ms = random.randint(1100,1200))
             # return True or False for game_active: bool variable
         return True
 
@@ -120,11 +117,11 @@ class Player(CircleShape):
     def shot_animation(self, screen, dt, position):
     
         if not self.alive:
-            self.alive = self.get_frame1(self.explosion_sprite1, dt)
-            screen.blit(self.explosion_sprite1[int(self.frame)], self.explosion_sprite1_rect.get_rect(center = position))
+            self.alive = self.get_frame1(teleport_sprite1, dt)
+            screen.blit(teleport_sprite1[int(self.frame)], teleport_rect1.get_rect(center = position))
         if self.frame == 0.1:
-            alive = self.get_frame2(self.explosion_sprite2, dt)
-            screen.blit(self.explosion_sprite2[int(-self.frame2)], self.explosion_sprite2_rect.get_rect(center = self.position))
+            alive = self.get_frame2(teleport_sprite2, dt)
+            screen.blit(teleport_sprite2[int(-self.frame2)], teleport_rect2.get_rect(center = self.position))
             
             
         
@@ -141,8 +138,9 @@ class Player(CircleShape):
             
     def is_immune(self):
         delay = 3000
+        
         seconds = pygame.time.get_ticks()
-        if seconds - self.last_collide_time - delay < self.immunity_duration and not seconds < 5000:
+        if seconds - self.last_collide_time - delay < PLAYER_IMMUNITY_DURATION and not seconds < 5000:
             return True
         return False
     
@@ -151,10 +149,11 @@ class Player(CircleShape):
     
     
     def update(self, dt: float) -> None:
+        friction = 0.96
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
         if self.alive and self.frame == 0:
             boost = False
-            self.accel *= self.friction
+            self.accel *= friction
             
             keys = pygame.key.get_pressed()
             
@@ -187,16 +186,16 @@ class Player(CircleShape):
                 if self.useable_stamina >= self.__stamina:
                     self.useable_stamina = self.__stamina
             if boost:
-                self.max_speed = PLAYER_SPEED + 100
+                self.__max_speed = PLAYER_SPEED + 100
             else:
-                self.max_speed = PLAYER_SPEED
+                self.__max_speed = PLAYER_SPEED
             
             
             # this limits the speed
-            if self.accel >= self.max_speed:
-                self.accel = self.max_speed
-            elif self.accel <= -self.max_speed:
-                self.accel = -self.max_speed
+            if self.accel >= self.__max_speed:
+                self.accel = self.__max_speed
+            elif self.accel <= -self.__max_speed:
+                self.accel = -self.__max_speed
 
             # to prevent negative scientific notation 
             if abs(self.accel) <= 0.1:
