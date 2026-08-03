@@ -91,7 +91,7 @@ def main():
             # Background images
             updatable.update(dt)
             screen.fill("black")
-            backgrounds = pygame.transform.rotozoom(background, int(player.useable_stamina) * dt, 1)
+            backgrounds = pygame.transform.rotozoom(background, 0, 1)
             screen.blit(backgrounds, background_rect)
             
             player.shot_animation(screen, dt, collide_position)
@@ -109,6 +109,7 @@ def main():
                        
             pygame.display.flip()
             dt = clock.tick(60) / 1000
+            print(dt)
         else:
             screen.blit(background, background_rect)
             

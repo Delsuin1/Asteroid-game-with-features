@@ -9,7 +9,8 @@ class Asteroid(CircleShape):
     def __init__(self, x: float, y: float, radius: float) -> None:
         super().__init__(x, y, radius)
         self.frame = 0
-        self.asteroid_sprite, self.asteroid_rect = animate(asteroid_sprite_sheet, 8,8, self.radius*0.033, self.position,  5,5)
+        # keep sprite in asteroid as radius is variable
+        self.asteroid_sprite, self.asteroid_rect = animate(asteroid_sprite_sheet, 8,8, self.radius*0.033, 5,5)
         self.asteroid_frame = 0
         
         
