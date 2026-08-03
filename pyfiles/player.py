@@ -84,18 +84,21 @@ class Player(CircleShape):
     def destroyed(self, game_active):
         if game_active:
             
+            self.position.x = self.position.x + random.randint(50,200)
+            # Don't know why but I need to separate the x,y values otherwise the boundaries will bring up an error
+            self.position.y = self.position.y + random.randint(50,200)
             # for imunnity frames
             self.last_collide_time = pygame.time.get_ticks() 
+            self.alive = False
             # create destruction sound
             # find out how to reduce volume and change timing of sound
-            self.alive = False
-            # could use teleport_sound.set_volume(0.2)
             self.lives -= 1
+            # could use teleport_sound.set_volume(0.2)
+            
+            # play explosion animation 
                 
-            # Returns player to center
-            self.position.x = random.randint(50,200)
-            # Don't know why but I need to separate the x,y values otherwise the boundaries will bring up an error
-            self.position.y = random.randint(50,200)
+            # teleports player to a random area
+            
             # player rotation resets to original
             self.rotation = 180
             
