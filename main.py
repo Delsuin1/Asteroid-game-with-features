@@ -93,18 +93,18 @@ def main():
             screen.fill("black")
             backgrounds = pygame.transform.rotozoom(background, 0, 1)
             screen.blit(backgrounds, background_rect)
-            
-            player.shot_animation(screen, dt, collide_position)
-                
-
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
                     
                     collide_position = player.position.x, player.position.y
                     game_active = player.destroyed(game_active)
+            if game_active:
+                player.shot_animation(screen, dt, collide_position)
             for drawables in drawable:
                 drawables.draw(screen)
+            hud.draw(screen)
+
 
                        
             pygame.display.flip()

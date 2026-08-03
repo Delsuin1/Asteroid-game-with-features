@@ -66,9 +66,9 @@ class Player(CircleShape):
             self.frame -= 14 * dt
           
           
-        if self.frame <= -len(images) or self.frame >= len(images):
-            self.frame = 0.1
+        if self.frame <= -len(images):
             teleport_sound.play(fade_ms = random.randint(1100,1200))
+            self.frame = 0.1
             return True
         return False
 
@@ -84,20 +84,15 @@ class Player(CircleShape):
     def destroyed(self, game_active):
         if game_active:
             
-            self.position.x = self.position.x + random.randint(50,200)
+                
+            # teleports player to a random area
+            self.position.x = self.position.x + random.randint(50,1000)
             # Don't know why but I need to separate the x,y values otherwise the boundaries will bring up an error
-            self.position.y = self.position.y + random.randint(50,200)
+            self.position.y = self.position.y + random.randint(50,1000)
             # for imunnity frames
             self.last_collide_time = pygame.time.get_ticks() 
             self.alive = False
-            # create destruction sound
-            # find out how to reduce volume and change timing of sound
             self.lives -= 1
-            # could use teleport_sound.set_volume(0.2)
-            
-            # play explosion animation 
-                
-            # teleports player to a random area
             
             # player rotation resets to original
             self.rotation = 180
@@ -108,14 +103,15 @@ class Player(CircleShape):
                 print("Game Over!")
                 destruction_sound.play(fade_ms = random.randint(1100,1200))
                 return False
-            else:
-                teleport_sound.play(fade_ms = random.randint(1100,1200))
-            # return True or False for game_active: bool variable
+            
+            # create destruction sound
+            teleport_sound.play(fade_ms = random.randint(1100,1200))
+            # could use teleport_sound.set_volume(0.2)
+        # return True or False for game_active: bool variable
         return True
 
     
     def shot_animation(self, screen, dt, position):
-    
         if not self.alive:
             self.alive = self.get_frame1(teleport_sprite1, dt)
             screen.blit(teleport_sprite1[int(self.frame)], teleport_rect1.get_rect(center = position))
@@ -131,7 +127,7 @@ class Player(CircleShape):
             shield_rect = shield_image.get_rect(center = self.position)
             player_shape = pygame.draw.polygon(screen, self.color, self.triangle(), LINE_WIDTH)
             if self.is_immune():
-                self.color = "grey"
+                self.color = "#596565"
                 screen.blit(shield_image.convert_alpha(), shield_rect)
             else:
                 self.color = BAR_COLOR
