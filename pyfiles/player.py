@@ -4,6 +4,7 @@ from pyfiles.images import *
 from pyfiles.animate import animate
 from pyfiles.sounds import *
 import random
+from pyfiles.shot import Shot
 from pyfiles.constants import (
     PLAYER_RADIUS, 
     LINE_WIDTH, 
@@ -16,6 +17,8 @@ from pyfiles.constants import (
     RIGHT,
     TOP,
     BOTTOM,
+    PLAYER_SHOOT_SPEED,
+    PLAYER_SHOOT_COOLDOWN_SECONDS,
 )
 
 
@@ -32,8 +35,8 @@ class Player(CircleShape):
         self.last_collide_time = 0
         # results of animate file stuff
         self.frame2 = 0
-        # in the Player class
-        
+        self.cooldown = 0
+
         
     def triangle(self) -> list[pygame.Vector2]:
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -80,7 +83,13 @@ class Player(CircleShape):
             self.frame2 = 0 
             self.frame = 0
 
-    
+    def shoot(self):
+        projectile = Shot(self.position.x, self.position.y)
+        shot_vector = pygame.Vector2(0,1)
+        rotated_shot = shot_vector.rotate(self.rotation)
+        shot_speed = rotated_shot * PLAYER_SHOOT_SPEED
+        projectile.velocity = shot_speed
+            
     def destroyed(self, game_active):
         if game_active:
             
@@ -143,13 +152,11 @@ class Player(CircleShape):
     def rotate(self, dt: float) -> None:
         self.rotation += PLAYER_TURN_SPEED * dt
     
-    
     def update(self, dt: float) -> None:
+        boost = False
         friction = 0.96
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
         if self.alive and self.frame == 0:
-            boost = False
-            self.accel *= friction
             
             keys = pygame.key.get_pressed()
             
@@ -160,17 +167,20 @@ class Player(CircleShape):
                         boost = True
                         self.useable_stamina -= 25 * dt
                     if boost:
-                        self.accel += 10 
+                        self.accel += 100 * dt 
                     if keys[pygame.K_w]:
-                        self.accel += 10
+                        self.accel += 200 * dt
                         self.useable_stamina -= 5 * dt
                     if keys[pygame.K_a]:
                         self.rotate(-dt)
                     if keys[pygame.K_s]:
-                        self.accel -= 20
+                        self.accel -= 200 * dt
                         self.useable_stamina -= 5 * dt
                     if keys[pygame.K_d]:
                         self.rotate(dt)
+                    if keys[pygame.K_SPACE] and self.cooldown < 0:
+                        self.cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
+                        self.shoot()
                     # create a faster acceleration sprint feature
                     # create an animation that players behind the ship to make a bigger blast
 
@@ -186,7 +196,6 @@ class Player(CircleShape):
             else:
                 self.__max_speed = PLAYER_SPEED
             
-            
             # this limits the speed
             if self.accel >= self.__max_speed:
                 self.accel = self.__max_speed
@@ -194,11 +203,15 @@ class Player(CircleShape):
                 self.accel = -self.__max_speed
 
             # to prevent negative scientific notation 
-            if abs(self.accel) <= 0.1:
+            if abs(self.accel) <= 0.6:
                 self.accel = 0
             if self.accel != 0:
                 self.move(dt)
-
+            if not keys[pygame.K_w]:
+                self.accel *= friction 
+                
+        self.cooldown -= dt
+        print(self.accel)
                 
     def move(self, dt) -> None:
         unit_vector = pygame.Vector2(0,self.accel)

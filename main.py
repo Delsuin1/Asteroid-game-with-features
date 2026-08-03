@@ -7,6 +7,7 @@ from pyfiles.hud import Hud
 from pyfiles.asteroid import Asteroid
 from pyfiles.asteroidfield import AsteroidField
 from pyfiles.sounds import background_music
+from pyfiles.shot import Shot
 from sys import exit as leave
 import random
 
@@ -32,6 +33,7 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group() 
+    shots = pygame.sprite.Group()
     gui = pygame.sprite.Group()
     
     bgm = pygame.mixer.music.load(background_music)
@@ -41,6 +43,7 @@ def main():
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
     Player.containers = (updatable, drawable)
+    Shot.containers = (shots, drawable, updatable)
     Hud.containers = (gui)
 
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
@@ -96,11 +99,11 @@ def main():
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
-                    
                     collide_position = player.position.x, player.position.y
                     game_active = player.destroyed(game_active)
-            if game_active:
-                player.shot_animation(screen, dt, collide_position)
+                    
+
+            player.shot_animation(screen, dt, collide_position)
             for drawables in drawable:
                 drawables.draw(screen)
             hud.draw(screen)
@@ -109,7 +112,7 @@ def main():
                        
             pygame.display.flip()
             dt = clock.tick(60) / 1000
-            print(dt)
+            
         else:
             screen.blit(background, background_rect)
             
