@@ -4,7 +4,7 @@ from pyfiles.images import *
 from pyfiles.animate import animate
 from pyfiles.sounds import *
 import random
-from pyfiles.shot import Shot
+from pyfiles.shot import Shot, Bomb
 from pyfiles.constants import (
     PLAYER_RADIUS, 
     LINE_WIDTH, 
@@ -19,6 +19,7 @@ from pyfiles.constants import (
     BOTTOM,
     PLAYER_SHOOT_SPEED,
     PLAYER_SHOOT_COOLDOWN_SECONDS,
+    PLAYER_BOMB_COOLDOWN_SECONDS
 )
 
 
@@ -66,12 +67,6 @@ class Player(CircleShape):
             self.frame2 = 0 
             self.frame = 0
 
-    def shoot(self):
-        projectile = Shot(self.position.x, self.position.y)
-        shot_vector = pygame.Vector2(0,1)
-        rotated_shot = shot_vector.rotate(self.rotation)
-        shot_speed = rotated_shot * PLAYER_SHOOT_SPEED
-        projectile.velocity = shot_speed
             
     def destroyed(self, game_active):
         if game_active:
@@ -138,6 +133,12 @@ class Player(CircleShape):
         rotation *= friction
         self.rotation += rotation
         
+    def shoot(self, type):
+        projectile = type(self.position.x, self.position.y)
+        shot_vector = pygame.Vector2(0,1)
+        rotated_shot = shot_vector.rotate(self.rotation)
+        shot_speed = rotated_shot * PLAYER_SHOOT_SPEED
+        projectile.velocity = shot_speed
         
     def update(self, dt: float) -> None:
         boost = False
@@ -167,7 +168,13 @@ class Player(CircleShape):
                         self.rotate(dt)
                     if keys[pygame.K_SPACE] and self.cooldown < 0:
                         self.cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
-                        self.shoot()
+                        self.shoot(Shot)
+                    
+                    
+                    if keys[pygame.K_g] and self.cooldown < 0:
+                        self.cooldown = PLAYER_BOMB_COOLDOWN_SECONDS
+                        self.shoot(Bomb)
+                        
                     # create a faster acceleration sprint feature
                     # create an animation that players behind the ship to make a bigger blast
 
@@ -199,7 +206,6 @@ class Player(CircleShape):
         self.cooldown -= dt
         if self.cooldown < 0:
             self.cooldown = - 0.1
-        print(self.cooldown)
     def move(self, dt) -> None:
         unit_vector = pygame.Vector2(0,self.accel)
         rotated_vector = unit_vector.rotate(self.rotation) 

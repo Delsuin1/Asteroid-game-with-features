@@ -7,7 +7,7 @@ from pyfiles.hud import Hud
 from pyfiles.asteroid import Asteroid
 from pyfiles.asteroidfield import AsteroidField
 from pyfiles.sounds import background_music
-from pyfiles.shot import Shot
+from pyfiles.shot import Shot, Bomb
 from sys import exit as leave
 import random
 
@@ -44,7 +44,9 @@ def main():
     AsteroidField.containers = (updatable)
     Player.containers = (updatable, drawable)
     Shot.containers = (shots, drawable, updatable)
+    Bomb.containers = (shots, drawable, updatable)
     Hud.containers = (gui)
+
 
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
@@ -93,17 +95,23 @@ def main():
             updatable.update(dt)
             screen.fill("black")
             screen.blit(background, background_rect)
+
+
+            for asteroid in asteroids:
+                if asteroid.collides_with(player):
+                    log_event("player_hit")
+                    collide_position = player.position.x, player.position.y
+                    game_active = player.destroyed(game_active)
+
+
             for asteroid in asteroids:
                 for shot in shots:
-                    if asteroid.collides_with(player):
-                        log_event("player_hit")
-                        collide_position = player.position.x, player.position.y
-                        game_active = player.destroyed(game_active)
                     if asteroid.collides_with(shot):
                         log_event("asteroid_shot")
                         asteroid.split()
                         shot.kill()
-
+                        if hasattr(shot, "bomb"):
+                            shot.split()
             player.teleport_animation(screen, dt, collide_position)
             for drawables in drawable:
                 drawables.draw(screen)
