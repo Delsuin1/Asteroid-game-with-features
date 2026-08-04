@@ -92,8 +92,7 @@ class Player(CircleShape):
             
     def destroyed(self, game_active):
         if game_active:
-            
-                
+            self.immunity = True    
             # teleports player to a random area
             self.position.x = self.position.x + random.randint(50,1000)
             # Don't know why but I need to separate the x,y values otherwise the boundaries will bring up an error
@@ -102,7 +101,7 @@ class Player(CircleShape):
             self.last_collide_time = pygame.time.get_ticks() 
             self.alive = False
             self.lives -= 1
-            
+            print(self.immunity)
             # player rotation resets to original
             self.rotation = 180
             
@@ -147,6 +146,7 @@ class Player(CircleShape):
         seconds = pygame.time.get_ticks()
         if seconds - self.last_collide_time - delay < PLAYER_IMMUNITY_DURATION and not seconds < 5000:
             return True
+        self.immunity = False
         return False
     
     def rotate(self, dt: float) -> None:
@@ -211,7 +211,6 @@ class Player(CircleShape):
                 self.accel *= friction 
                 
         self.cooldown -= dt
-        print(self.accel)
                 
     def move(self, dt) -> None:
         unit_vector = pygame.Vector2(0,self.accel)
