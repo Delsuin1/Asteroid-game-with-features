@@ -46,23 +46,6 @@ class Player(CircleShape):
         c = self.position - forward * self.radius + right
         return [a, b, c]
     
-    
-    def in_boundary(self, left, right, top, bottom):
-        # Example: If player x coor is more than the screens width(1280),
-        # reduce the player's x coordinate by the screens width returning the player to the opposite side of the screen(left side).
-        
-        # If the player goes in the opposite direction, check if the player is at x coor 0 if it is add the screen's width.
-        # This places the player on the opposite side(right side).
-        
-        # Add padding so the player model completely leaves frame
-        if self.position.x > right:
-            self.position.x -= right
-        elif self.position.x < left:
-            self.position.x += right
-        elif self.position.y > bottom:
-            self.position.y -= bottom
-        elif self.position.y < top:
-            self.position.y += bottom
 
     def get_frame1(self, images, dt):
         if self.frame <= len(images):
@@ -94,9 +77,9 @@ class Player(CircleShape):
         if game_active:
             self.immunity = True    
             # teleports player to a random area
-            self.position.x = self.position.x + random.randint(50,1000)
+            self.position.x = self.position.x + random.randint(-1000,1000)
             # Don't know why but I need to separate the x,y values otherwise the boundaries will bring up an error
-            self.position.y = self.position.y + random.randint(50,1000)
+            self.position.y = self.position.y + random.randint(-1000,1000)
             # for imunnity frames
             self.last_collide_time = pygame.time.get_ticks() 
             self.alive = False

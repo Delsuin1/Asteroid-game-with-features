@@ -26,6 +26,24 @@ class CircleShape(pygame.sprite.Sprite):
     def update(self, dt: float) -> None:
         # must override
         pass
+
+
+    def in_boundary(self, left, right, top, bottom):
+        # Example: If player x coor is more than the screens width(1280),
+        # reduce the player's x coordinate by the screens width returning the player to the opposite side of the screen(left side).
+        
+        # If the player goes in the opposite direction, check if the player is at x coor 0 if it is add the screen's width.
+        # This places the player on the opposite side(right side).
+        
+        # Add padding so the player model completely leaves frame
+        if self.position.x > right:
+            self.position.x -= right
+        elif self.position.x < left:
+            self.position.x += right
+        elif self.position.y > bottom:
+            self.position.y -= bottom
+        elif self.position.y < top:
+            self.position.y += bottom
     
     
     def collides_with(self, other) -> bool:
