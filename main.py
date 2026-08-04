@@ -73,8 +73,6 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     game_active = False
-                if event.key == pygame.K_t:
-                    player.alive = False
                     
                                      
                                      
@@ -94,16 +92,19 @@ def main():
             # Background images
             updatable.update(dt)
             screen.fill("black")
-            backgrounds = pygame.transform.rotozoom(background, 0, 1)
-            screen.blit(backgrounds, background_rect)
+            screen.blit(background, background_rect)
             for asteroid in asteroids:
-                if asteroid.collides_with(player):
-                    log_event("player_hit")
-                    collide_position = player.position.x, player.position.y
-                    game_active = player.destroyed(game_active)
-                    
+                for shot in shots:
+                    if asteroid.collides_with(player):
+                        log_event("player_hit")
+                        collide_position = player.position.x, player.position.y
+                        game_active = player.destroyed(game_active)
+                    if asteroid.collides_with(shot):
+                        log_event("asteroid_shot")
+                        asteroid.split()
+                        shot.kill()
 
-            player.shot_animation(screen, dt, collide_position)
+            player.teleport_animation(screen, dt, collide_position)
             for drawables in drawable:
                 drawables.draw(screen)
             hud.draw(screen)
@@ -115,7 +116,8 @@ def main():
             
         else:
             screen.blit(background, background_rect)
-            
+            for asteroid in asteroids:
+                asteroid.draw(screen)
             draw_text("Press SPACE to start", MENU_TEXT_FONT, TEXT_COLOR, X,300)
             draw_text("Press Q to stop", MENU_TEXT_FONT, TEXT_COLOR, X,350)
             draw_text("YOUR SCORE", MENU_TEXT_FONT, TEXT_COLOR, 1024,150)

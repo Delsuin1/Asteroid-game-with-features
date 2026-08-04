@@ -2,6 +2,7 @@ import pygame
 from pyfiles.rectshape import RectShape
 from pyfiles.text import fuel_text, fuel_text_rect, score_text, score_text_rect
 from pyfiles.constants import BAR_COLOR, BOARDER_WIDTH, LINE_WIDTH, TEXT_COLOR
+from pyfiles.images import teleport_sprite1, teleport_rect1
 
 
 class Hud(RectShape):
@@ -21,15 +22,17 @@ class Hud(RectShape):
         
         
     def lives_hud(self,screen):
-        gap = 50
+        gap = 70
         # (width,height)
-        left = (165, 130 * 5)  
-        middle = (180,90 * 6.7) 
-        right = ((195,130 * 5))
+        # left = (165, 130 * 5)  
+        # middle = (180,90 * 6.7) 
+        # right = ((195,130 * 5))
    
+        # for i in range(self.player.lives):
+        #     triangle = [(left[0] + gap * i, left[1]), (middle[0] + gap * i, middle[1]), (right[0] + gap * i, right[1])]
+        #     pygame.draw.polygon(screen, self.player.color, triangle, LINE_WIDTH)
         for i in range(self.player.lives):
-            triangle = [(left[0] + gap * i, left[1]), (middle[0] + gap * i, middle[1]), (right[0] + gap * i, right[1])]
-            pygame.draw.polygon(screen, self.player.color, triangle, LINE_WIDTH)
+            screen.blit(teleport_sprite1[10], teleport_sprite1[10].get_rect(center = (190+gap*i,630)))
         
         
     def draw(self, screen):

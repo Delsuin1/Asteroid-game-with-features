@@ -101,7 +101,6 @@ class Player(CircleShape):
             self.last_collide_time = pygame.time.get_ticks() 
             self.alive = False
             self.lives -= 1
-            print(self.immunity)
             # player rotation resets to original
             self.rotation = 180
             
@@ -119,7 +118,7 @@ class Player(CircleShape):
         return True
 
     
-    def shot_animation(self, screen, dt, position):
+    def teleport_animation(self, screen, dt, position):
         if not self.alive:
             self.alive = self.get_frame1(teleport_sprite1, dt)
             screen.blit(teleport_sprite1[int(self.frame)], teleport_rect1.get_rect(center = position))
@@ -150,11 +149,16 @@ class Player(CircleShape):
         return False
     
     def rotate(self, dt: float) -> None:
-        self.rotation += PLAYER_TURN_SPEED * dt
-    
+        rotation = 0
+        rotation += 300 * dt
+        friction = 0.9
+        rotation *= friction
+        self.rotation += rotation
+        
+        
     def update(self, dt: float) -> None:
         boost = False
-        friction = 0.96
+        friction = 0.966
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
         if self.alive and self.frame == 0:
             
@@ -209,9 +213,10 @@ class Player(CircleShape):
                 self.move(dt)
             if not keys[pygame.K_w]:
                 self.accel *= friction 
-                
         self.cooldown -= dt
-                
+        if self.cooldown < 0:
+            self.cooldown = - 0.1
+        print(self.cooldown)
     def move(self, dt) -> None:
         unit_vector = pygame.Vector2(0,self.accel)
         rotated_vector = unit_vector.rotate(self.rotation) 

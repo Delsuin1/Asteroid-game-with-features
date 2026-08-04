@@ -1,6 +1,8 @@
 import pygame
 from pyfiles.circleshape import CircleShape
-from pyfiles.constants import SHOT_RADIUS
+from pyfiles.constants import SHOT_RADIUS, LINE_WIDTH   
+
+
 class Shot(CircleShape):
     def __init__(self, x: float, y: float) -> None:
         super().__init__(x, y, SHOT_RADIUS)
@@ -8,7 +10,7 @@ class Shot(CircleShape):
         
     def draw(self, screen):
         # change white for the shot animation using the teleport animation
-        pygame.draw.circle(screen, "white", self.position, self.radius) #LineWidth)
+        pygame.draw.circle(screen, "white", self.position, self.radius, LINE_WIDTH)
         
         
     def update(self, dt):

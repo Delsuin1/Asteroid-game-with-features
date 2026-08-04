@@ -8,6 +8,7 @@ background = pygame.image.load("images/space.png").convert()
 background_rect = background.get_rect(center = (X, Y))
 shield = pygame.image.load("images/shield.png").convert_alpha()
 shield_image = pygame.transform.rotozoom(shield, 0, 0.4)
+
 asteroid_sprite_sheet = pygame.image.load("images/AsteroidAnimation.png").convert_alpha()
 explosion_sprite_sheet = pygame.image.load("fx/particlefx_07.png").convert_alpha()
 
