@@ -51,7 +51,11 @@ def main():
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
     hud = Hud(player)
-
+    score_dict = {
+        "max" : 0,
+        "med" : 0,
+        "min" : 0,
+                  }
                 
             
     
@@ -77,13 +81,18 @@ def main():
                     game_active = False
                     
                                      
-                                     
-                if not game_active:
+            if not game_active:
+                if event.type == pygame.KEYDOWN:               
                     if event.key == pygame.K_SPACE:
+                        # add a way to save the information after next round
+                        
+                        # emptys the groups so it clears the screen
+                        score_dict = dict.fromkeys(score_dict, 0)
                         updatable.empty() 
                         drawable.empty()
                         asteroids.empty()
                         player, asteroid_field, hud = restart()
+                        
                         game_active = True
                     
         log_state()
@@ -100,6 +109,8 @@ def main():
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
+                    
+                    
                     collide_position = player.position.x, player.position.y
                     game_active = player.destroyed(game_active)
 
@@ -108,6 +119,13 @@ def main():
                 for shot in shots:
                     if asteroid.collides_with(shot):
                         log_event("asteroid_shot")
+                        if asteroid.radius >= ASTEROID_MAX_RADIUS:
+                            score_dict["max"] += ASTEROID_MAX_POINTS
+                        elif asteroid.radius >= ASTEROID_MIN_RADIUS * 2:
+                            score_dict["med"] += ASTEROID_MED_POINTS
+                        else:
+                            score_dict["min"] += ASTEROID_MIN_POINTS    
+                        
                         asteroid.split()
                         shot.kill()
                         if hasattr(shot, "bomb"):
@@ -116,11 +134,15 @@ def main():
             for drawables in drawable:
                 drawables.draw(screen)
             hud.draw(screen)
+            # draw to hud screen
+
+            draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,200)
 
 
                        
             pygame.display.flip()
             dt = clock.tick(60) / 1000
+            
             
         else:
             screen.blit(background, background_rect)
@@ -128,8 +150,14 @@ def main():
                 asteroid.draw(screen)
             draw_text("Press SPACE to start", MENU_TEXT_FONT, TEXT_COLOR, X,300)
             draw_text("Press Q to stop", MENU_TEXT_FONT, TEXT_COLOR, X,350)
-            draw_text("YOUR SCORE", MENU_TEXT_FONT, TEXT_COLOR, 1024,150)
+            
+            max, medium, min = score_dict.values()
+            print(f"{max}\n{medium}\n{min}")
+            draw_text(f"YOUR SCORE", MENU_TEXT_FONT, TEXT_COLOR, 1024,150)
+            draw_text(f"{score_dict["max"], score_dict["med"], score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,250)
+            draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,200)
             player.lives = PLAYER_LIVES
+                
           
             
             pygame.display.flip()

@@ -11,9 +11,8 @@ class Shot(CircleShape):
         
         
     def draw(self, screen):
-        # frame 7 for regular bullet
-        # frame 10-11 for bomb
-        # change white for the shot animation using the teleport animation
+        # frame 6 for regular bullet
+
         screen.blit(teleport_sprite1[6], teleport_sprite1[10].get_rect(center = (self.position)))
         pygame.draw.circle(screen, "#3C8263", self.position, self.radius, LINE_WIDTH)
         
@@ -26,7 +25,6 @@ class Bomb(Shot):
         super().__init__(x,y, BOMB_RADIUS) 
         self.bomb = True
     def draw(self, screen):
-        # frame 6 for regular bullet
         # frame 10 for bomb
         screen.blit(teleport_sprite1[10], teleport_sprite1[10].get_rect(center = (self.position)))
         pygame.draw.circle(screen, "#3C8263", self.position, self.radius, LINE_WIDTH)
@@ -37,4 +35,4 @@ class Bomb(Shot):
             angle = 40*i
             rotation = self.velocity.rotate(angle)
             shot = Shot(self.position.x, self.position.y)
-            shot.velocity = rotation / 2
+            shot.velocity = rotation / 4

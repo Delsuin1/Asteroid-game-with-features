@@ -206,6 +206,8 @@ class Player(CircleShape):
         self.cooldown -= dt
         if self.cooldown < 0:
             self.cooldown = - 0.1
+            
+            
     def move(self, dt) -> None:
         unit_vector = pygame.Vector2(0,self.accel)
         rotated_vector = unit_vector.rotate(self.rotation) 
