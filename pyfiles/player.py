@@ -136,7 +136,7 @@ class Player(CircleShape):
     def shoot(self, type):
         projectile = type(self.position.x, self.position.y)
         shot_vector = pygame.Vector2(0,1)
-        rotated_shot = shot_vector.rotate(self.rotation)
+        rotated_shot = shot_vector.rotate(self.rotation + random.randint(-10,10))
         shot_speed = rotated_shot * PLAYER_SHOOT_SPEED
         projectile.velocity = shot_speed
         

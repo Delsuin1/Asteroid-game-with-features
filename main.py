@@ -136,7 +136,7 @@ def main():
             hud.draw(screen)
             # draw to hud screen
 
-            draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,200)
+            draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1200,40)
 
 
                        
@@ -152,7 +152,7 @@ def main():
             draw_text("Press Q to stop", MENU_TEXT_FONT, TEXT_COLOR, X,350)
             
             max, medium, min = score_dict.values()
-            print(f"{max}\n{medium}\n{min}")
+            # print(f"{max}\n{medium}\n{min}")
             draw_text(f"YOUR SCORE", MENU_TEXT_FONT, TEXT_COLOR, 1024,150)
             draw_text(f"{score_dict["max"], score_dict["med"], score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,250)
             draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,200)
