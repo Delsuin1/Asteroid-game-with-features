@@ -8,6 +8,7 @@ from pyfiles.asteroid import Asteroid
 from pyfiles.asteroidfield import AsteroidField
 from pyfiles.sounds import background_music
 from pyfiles.shot import Shot, Bomb
+from pyfiles.skillorb import SkillOrb
 from sys import exit as leave
 import random
 
@@ -35,6 +36,7 @@ def main():
     asteroids = pygame.sprite.Group() 
     shots = pygame.sprite.Group()
     gui = pygame.sprite.Group()
+    orbs = pygame.sprite.Group()
     
     bgm = pygame.mixer.music.load(background_music)
     pygame.mixer.music.set_volume(0.14)
@@ -44,12 +46,12 @@ def main():
     AsteroidField.containers = (updatable)
     Player.containers = (updatable, drawable)
     Shot.containers = (shots, drawable, updatable)
-    Bomb.containers = (shots, drawable, updatable)
     Hud.containers = (gui)
-
+    SkillOrb.containers = (updatable, drawable, orbs)
 
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
+    orb = SkillOrb(400,400, 40)
     hud = Hud(player)
     score_dict = {
         "max" : 0,
@@ -104,8 +106,17 @@ def main():
             updatable.update(dt)
             screen.fill("black")
             screen.blit(background, background_rect)
-
-
+            
+            
+            
+            print(dt)
+            for orb in orbs:
+                orb.update(dt)
+                orb.draw(screen)
+                if orb.collides_with(player):
+                    player.skill = Bomb
+                else:
+                    player.skill = Shot
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
@@ -130,6 +141,8 @@ def main():
                         shot.kill()
                         if hasattr(shot, "bomb"):
                             shot.split()
+                            
+                            
             player.teleport_animation(screen, dt, collide_position)
             for drawables in drawable:
                 drawables.draw(screen)

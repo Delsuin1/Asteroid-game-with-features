@@ -37,6 +37,7 @@ class Player(CircleShape):
         # results of animate file stuff
         self.frame2 = 0
         self.cooldown = 0
+        self.skill = Shot
 
         
     def triangle(self) -> list[pygame.Vector2]:
@@ -129,11 +130,17 @@ class Player(CircleShape):
     def rotate(self, dt: float) -> None:
         rotation = 0
         rotation += 300 * dt
+        # to make left and right movement slower
         friction = 0.9
         rotation *= friction
         self.rotation += rotation
         
     def shoot(self, type):
+        if type == Shot:
+            self.cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
+        if type == Bomb:
+            self.cooldown = PLAYER_BOMB_COOLDOWN_SECONDS    
+        
         projectile = type(self.position.x, self.position.y)
         shot_vector = pygame.Vector2(0,1)
         rotated_shot = shot_vector.rotate(self.rotation + random.randint(-10,10))
@@ -167,12 +174,10 @@ class Player(CircleShape):
                     if keys[pygame.K_d]:
                         self.rotate(dt)
                     if keys[pygame.K_SPACE] and self.cooldown < 0:
-                        self.cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
-                        self.shoot(Shot)
+                        self.shoot(self.skill)
                     
-                    
+                    # This should be gone once skill orb is fully functional
                     if keys[pygame.K_g] and self.cooldown < 0:
-                        self.cooldown = PLAYER_BOMB_COOLDOWN_SECONDS
                         self.shoot(Bomb)
                         
                     # create a faster acceleration sprint feature

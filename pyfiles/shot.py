@@ -3,6 +3,7 @@ from pyfiles.circleshape import CircleShape
 from pyfiles.constants import SHOT_RADIUS, LINE_WIDTH, BOMB_RADIUS
 from pyfiles.images import teleport_sprite1, teleport_rect1
 from math import sqrt
+from pyfiles.constants import LEFT, RIGHT, TOP, BOTTOM
 
 class Shot(CircleShape):
     def __init__(self, x: float, y: float, shot_radius=SHOT_RADIUS) -> None:
@@ -25,12 +26,14 @@ class Shot(CircleShape):
         distance = sqrt((position.x - self.position_x) ** 2 + (position.y - self.position_y) ** 2) * dt
         if distance > 5:
             self.kill()
+        
 
     def update(self, dt):
         self.position += self.velocity * dt
         if self.limit_range:
             self.distance(self.position, dt)
-        
+        self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
+            
 class Bomb(Shot):
     def __init__(self, x, y):
         super().__init__(x,y, BOMB_RADIUS) 
@@ -38,7 +41,7 @@ class Bomb(Shot):
         
     def update(self, dt):
         self.position += 0.3 * self.velocity * dt
-        
+
     def draw(self, screen):
         # frame 10 for bomb
         screen.blit(teleport_sprite1[10], teleport_sprite1[10].get_rect(center = (self.position)))
@@ -46,7 +49,7 @@ class Bomb(Shot):
         
     def split(self):
         self.kill()
-        for i in range(1, 8+1):
+        for i in range(8):
             angle = 40*i
             rotation = self.velocity.rotate(angle) 
             shot = Shot(self.position.x, self.position.y)
