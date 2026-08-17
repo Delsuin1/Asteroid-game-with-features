@@ -109,7 +109,6 @@ def main():
             
             
             
-            print(dt)
             for orb in orbs:
                 orb.update(dt)
                 orb.draw(screen)

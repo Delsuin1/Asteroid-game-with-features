@@ -23,11 +23,23 @@ class Shot(CircleShape):
     
     def distance(self, position: tuple[list[int,int]], dt):
         # position is the current variable distance
+        #this finds the radius of a circle 
         distance = sqrt((position.x - self.position_x) ** 2 + (position.y - self.position_y) ** 2) * dt
-        if distance > 5:
+        if distance > 2:
             self.kill()
         
-
+    def in_boundary(self, left, right, top, bottom):
+        
+        # Add padding so the player model completely leaves frame
+        if self.position.x > right:
+            self.kill()
+        elif self.position.x < left:
+            self.kill()
+        elif self.position.y > bottom:
+            self.kill()
+        elif self.position.y < top:
+            self.kill()
+            
     def update(self, dt):
         self.position += self.velocity * dt
         if self.limit_range:
@@ -40,6 +52,7 @@ class Bomb(Shot):
         self.bomb = True
         
     def update(self, dt):
+        self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
         self.position += 0.3 * self.velocity * dt
 
     def draw(self, screen):

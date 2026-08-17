@@ -148,11 +148,11 @@ class Player(CircleShape):
         projectile.velocity = shot_speed
         
     def update(self, dt: float) -> None:
+        time = False if self.immunity else True
         boost = False
         friction = 0.966
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
         if self.alive and self.frame == 0:
-            
             keys = pygame.key.get_pressed()
             
             # friction will multiply by percent e.g. 0.95 which decreases velocity(gradual speed)
@@ -173,8 +173,9 @@ class Player(CircleShape):
                         self.useable_stamina -= 5 * dt
                     if keys[pygame.K_d]:
                         self.rotate(dt)
-                    if keys[pygame.K_SPACE] and self.cooldown < 0:
+                    if keys[pygame.K_SPACE] and self.cooldown < 0 and time:
                         self.shoot(self.skill)
+                    print(time)
                     
                     # This should be gone once skill orb is fully functional
                     if keys[pygame.K_g] and self.cooldown < 0:
