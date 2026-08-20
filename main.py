@@ -51,7 +51,7 @@ def main():
 
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
-    orb = SkillOrb(400,400, 40)
+    orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40)
     hud = Hud(player)
     score_dict = {
         "max" : 0,
@@ -65,7 +65,9 @@ def main():
         player = Player(X,Y, PLAYER_STAMINA, PLAYER_LIVES)
         asteroid_field = AsteroidField()
         hud = Hud(player)
-        return player, asteroid_field, hud
+        orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40)
+
+        return player, asteroid_field, hud, orb
     
 
     collide_position = [X,Y]
@@ -93,7 +95,8 @@ def main():
                         updatable.empty() 
                         drawable.empty()
                         asteroids.empty()
-                        player, asteroid_field, hud = restart()
+                        orbs.empty()
+                        player, asteroid_field, hud, orb = restart()
                         
                         game_active = True
                     
@@ -110,12 +113,13 @@ def main():
             
             
             for orb in orbs:
-                orb.update(dt)
-                orb.draw(screen)
+       
                 if orb.collides_with(player):
+                    orb.timer = True
                     player.skill = Bomb
                 else:
                     player.skill = Shot
+                    
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")

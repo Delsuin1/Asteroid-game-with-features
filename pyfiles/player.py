@@ -175,7 +175,7 @@ class Player(CircleShape):
                         self.rotate(dt)
                     if keys[pygame.K_SPACE] and self.cooldown < 0 and time:
                         self.shoot(self.skill)
-                    print(time)
+                
                     
                     # This should be gone once skill orb is fully functional
                     if keys[pygame.K_g] and self.cooldown < 0:
