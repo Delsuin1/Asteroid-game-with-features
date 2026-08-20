@@ -4,7 +4,7 @@ from pyfiles.images import *
 from pyfiles.animate import animate
 from pyfiles.sounds import *
 import random
-from pyfiles.shot import Shot, Bomb, DoubleShot
+from pyfiles.shot import Shot, Bomb, BarrierShot
 from pyfiles.constants import (
     PLAYER_RADIUS, 
     LINE_WIDTH, 
@@ -136,7 +136,7 @@ class Player(CircleShape):
         self.rotation += rotation
         
     def shoot(self, type):
-        projectile = DoubleShot(self.position.x, self.position.y)
+        projectile = type(self.position.x, self.position.y)
         self.cooldown = projectile.cooldown
         shot_vector = pygame.Vector2(0,1)
         rotated_shot = shot_vector.rotate(self.rotation + random.randint(-10,10))

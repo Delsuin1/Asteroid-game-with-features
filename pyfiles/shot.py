@@ -86,17 +86,22 @@ class WaveShot(Shot):
 
 
 
-class DoubleShot(Shot):
+class BarrierShot(Shot):
     def __init__(self, x, y):
         super().__init__(x,y)
         self.cooldown = DOUBLESHOT_COOLDOWN_SECONDS
         self.limit_range = True
+        self.immunity = True
+        self.num = 0
         
-    def second_shot(self, dt):
- 
+        
+    def second_shot(self, dt, gap=2):
+        # implement for loop to create a gap
         shot = Shot(self.position.x, self.position.y)
+        shot.limit_range = True
+        shot.distance(self.position, dt, 3)
         # this is the movement
-        shot.velocity = self.velocity * dt
+        shot.velocity = self.velocity * 10 * dt
         
     def draw(self, screen):
         # indicator
@@ -105,10 +110,13 @@ class DoubleShot(Shot):
         
     def update(self, dt):
         self.position += self.velocity * 1.5 * dt
-        if self.limit_range:
+        if self.limit_range and self.num < 10:
             self.distance(self.position, dt, 2.5)
             self.second_shot(dt)
-        
+            self.num+=1
+            self.timer += 1 * dt
+        if self.timer >= 5:
+            self.kill()
   
 
     

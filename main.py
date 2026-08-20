@@ -49,7 +49,7 @@ def main():
     Hud.containers = (gui)
     SkillOrb.containers = (updatable, drawable, orbs)
 
-    weapon_types = [Shot, Bomb, DoubleShot]
+    weapon_types = [Shot, Bomb, BarrierShot]
     
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
