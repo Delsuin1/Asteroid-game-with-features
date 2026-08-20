@@ -175,7 +175,7 @@ def main():
             player.lives = PLAYER_LIVES
                 
           
-
+        print(clock)
         dt = clock.tick(60) / 1000  
         pygame.display.flip()
         

@@ -4,7 +4,7 @@ from pyfiles.images import *
 from pyfiles.animate import animate
 from pyfiles.sounds import *
 import random
-from pyfiles.shot import Shot, Bomb
+from pyfiles.shot import Shot, Bomb, DoubleShot
 from pyfiles.constants import (
     PLAYER_RADIUS, 
     LINE_WIDTH, 
@@ -18,8 +18,8 @@ from pyfiles.constants import (
     TOP,
     BOTTOM,
     PLAYER_SHOOT_SPEED,
-    PLAYER_SHOOT_COOLDOWN_SECONDS,
-    PLAYER_BOMB_COOLDOWN_SECONDS
+    SHOT_COOLDOWN_SECONDS,
+    BOMB_COOLDOWN_SECONDS
 )
 
 
@@ -136,12 +136,8 @@ class Player(CircleShape):
         self.rotation += rotation
         
     def shoot(self, type):
-        if type == Shot:
-            self.cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
-        elif type == Bomb:
-            self.cooldown = PLAYER_BOMB_COOLDOWN_SECONDS    
-        
-        projectile = type(self.position.x, self.position.y)
+        projectile = DoubleShot(self.position.x, self.position.y)
+        self.cooldown = projectile.cooldown
         shot_vector = pygame.Vector2(0,1)
         rotated_shot = shot_vector.rotate(self.rotation + random.randint(-10,10))
         shot_speed = rotated_shot * PLAYER_SHOOT_SPEED
