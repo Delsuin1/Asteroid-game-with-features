@@ -1,6 +1,6 @@
 import pygame
 from pyfiles.circleshape import CircleShape
-from pyfiles.shot import Shot
+from pyfiles.shot import Shot, Bomb, DoubleShot
 from pyfiles.constants import LEFT, RIGHT, TOP, BOTTOM, SCREEN_WIDTH, SCREEN_HEIGHT
 import random
 
@@ -10,11 +10,19 @@ class SkillOrb(CircleShape):
         self.rotation = 0
         self.timer = False  
         self.time = 0
+        self.skill = skill
+        self.types = Shot, Bomb, DoubleShot
         
     def draw(self, screen):
-        pygame.draw.circle(screen, "gold", self.position, self.radius)
-    
+        if self.skill == Shot:
+            pygame.draw.circle(screen, "green", self.position, self.radius)
+        elif self.skill == Bomb:
+            pygame.draw.circle(screen, "gold", self.position, self.radius)
+        elif self.skill == DoubleShot:
+            pygame.draw.circle(screen, "blue", self.position, self.radius)
+            
     def update(self, dt):
+        
         self.time += 1 * dt if self.timer == True else 0
         self.move(dt)
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
@@ -22,7 +30,7 @@ class SkillOrb(CircleShape):
         if self.time >= 2:
             self.kill()
             self.time = 0
-            SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40)
+            SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice(self.types))
             
     
     def rotate(self, dt: float) -> None:

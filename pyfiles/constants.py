@@ -1,4 +1,5 @@
 import pygame
+
 pygame.init()
 
 SCREEN_WIDTH = 1280
@@ -29,6 +30,7 @@ PLAYER_IMMUNITY_DURATION = 1500
 
 X = SCREEN_WIDTH / 2
 Y = SCREEN_HEIGHT / 2
+    
     
 SHOT_RADIUS = 5 
 BOMB_RADIUS = 15

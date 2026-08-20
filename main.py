@@ -7,7 +7,7 @@ from pyfiles.hud import Hud
 from pyfiles.asteroid import Asteroid
 from pyfiles.asteroidfield import AsteroidField
 from pyfiles.sounds import background_music
-from pyfiles.shot import Shot, Bomb
+from pyfiles.shot import *
 from pyfiles.skillorb import SkillOrb
 from sys import exit as leave
 import random
@@ -49,28 +49,30 @@ def main():
     Hud.containers = (gui)
     SkillOrb.containers = (updatable, drawable, orbs)
 
+    weapon_types = [Shot, Bomb, DoubleShot]
+    
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
-    orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40)
+    orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice(weapon_types)) 
     hud = Hud(player)
     score_dict = {
         "max" : 0,
         "med" : 0,
         "min" : 0,
                   }
-                
             
+    
+    
+
+    collide_position = [X,Y]
     
     def restart():
         player = Player(X,Y, PLAYER_STAMINA, PLAYER_LIVES)
         asteroid_field = AsteroidField()
         hud = Hud(player)
-        orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40)
+        orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice(weapon_types))
 
         return player, asteroid_field, hud, orb
-    
-
-    collide_position = [X,Y]
     
     clock = pygame.time.Clock()
     dt = 0.0
@@ -116,9 +118,10 @@ def main():
        
                 if orb.collides_with(player):
                     orb.timer = True
-                    player.skill = Bomb
-                else:
-                    player.skill = Shot
+                    
+                    player.skill = orb.skill
+                    print(True)
+                    
                     
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
@@ -154,10 +157,8 @@ def main():
 
             draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1200,40)
 
-
                        
-            pygame.display.flip()
-            dt = clock.tick(60) / 1000
+            
             
             
         else:
@@ -166,7 +167,6 @@ def main():
                 asteroid.draw(screen)
             draw_text("Press SPACE to start", MENU_TEXT_FONT, TEXT_COLOR, X,300)
             draw_text("Press Q to stop", MENU_TEXT_FONT, TEXT_COLOR, X,350)
-            
             max, medium, min = score_dict.values()
             # print(f"{max}\n{medium}\n{min}")
             draw_text(f"YOUR SCORE", MENU_TEXT_FONT, TEXT_COLOR, 1024,150)
@@ -175,10 +175,9 @@ def main():
             player.lives = PLAYER_LIVES
                 
           
-            
-            pygame.display.flip()
-            
-            
+
+        dt = clock.tick(60) / 1000  
+        pygame.display.flip()
         
             
             

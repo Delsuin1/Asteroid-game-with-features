@@ -138,7 +138,7 @@ class Player(CircleShape):
     def shoot(self, type):
         if type == Shot:
             self.cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
-        if type == Bomb:
+        elif type == Bomb:
             self.cooldown = PLAYER_BOMB_COOLDOWN_SECONDS    
         
         projectile = type(self.position.x, self.position.y)

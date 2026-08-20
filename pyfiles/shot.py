@@ -45,7 +45,13 @@ class Shot(CircleShape):
         if self.limit_range:
             self.distance(self.position, dt)
         self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
-            
+
+
+class DoubleShot(Shot):
+    def __init__(self, x, y):
+        super().__init__(x,y)
+        
+
 class Bomb(Shot):
     def __init__(self, x, y):
         super().__init__(x,y, BOMB_RADIUS) 
