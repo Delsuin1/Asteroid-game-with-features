@@ -18,8 +18,6 @@ from pyfiles.constants import (
     TOP,
     BOTTOM,
     PLAYER_SHOOT_SPEED,
-    SHOT_COOLDOWN_SECONDS,
-    BOMB_COOLDOWN_SECONDS
 )
 
 
@@ -137,6 +135,7 @@ class Player(CircleShape):
         
     def shoot(self, type):
         projectile = type(self.position.x, self.position.y)
+        # needed for bullet cooldown
         self.cooldown = projectile.cooldown
         shot_vector = pygame.Vector2(0,1)
         rotated_shot = shot_vector.rotate(self.rotation + random.randint(-10,10))

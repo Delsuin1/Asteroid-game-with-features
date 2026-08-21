@@ -62,9 +62,6 @@ def main():
         "min" : 0,
                   }
             
-    
-    
-
     collide_position = [X,Y]
     
     def restart():
@@ -86,7 +83,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     game_active = False
-                    
+            # Keys to be removed if ever released as a public build or something
                 if event.key == pygame.K_j:    
                     player.skill = BarrierShot
                 if event.key == pygame.K_k:
@@ -148,9 +145,10 @@ def main():
                             score_dict["min"] += ASTEROID_MIN_POINTS    
                         
                         asteroid.split()
-                        shot.kill()
                         if hasattr(shot, "bomb"):
                             shot.split()
+                        else:
+                            shot.kill()
                             
                             
             player.teleport_animation(screen, dt, collide_position)

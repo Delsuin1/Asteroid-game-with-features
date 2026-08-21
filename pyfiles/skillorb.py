@@ -11,7 +11,6 @@ class SkillOrb(CircleShape):
         self.timer = False  
         self.time = 0
         self.skill = skill
-        self.types = Shot, Bomb, BarrierShot
         
     def draw(self, screen):
         if self.skill == Shot:
@@ -32,7 +31,7 @@ class SkillOrb(CircleShape):
         if self.time >= 2:
             self.kill()
             self.time = 0
-            SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice(self.types))
+            SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice([Shot, Bomb, BarrierShot, WaveShot]))
             
     
     def rotate(self, dt: float) -> None:
