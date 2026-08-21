@@ -3,7 +3,7 @@ from pyfiles.circleshape import CircleShape
 from pyfiles.constants import SHOT_RADIUS, LINE_WIDTH, BOMB_RADIUS
 from pyfiles.images import teleport_sprite1, teleport_rect1
 from math import sqrt
-from pyfiles.constants import LEFT, RIGHT, TOP, BOTTOM, BOMB_COOLDOWN_SECONDS, SHOT_COOLDOWN_SECONDS, DOUBLESHOT_COOLDOWN_SECONDS
+from pyfiles.constants import LEFT, RIGHT, TOP, BOTTOM, BOMB_COOLDOWN_SECONDS, SHOT_COOLDOWN_SECONDS, WAVESHOT_COOLDOWN_SECONDS, BARRIER_SHOT_COOLDOWN_SECONDS
 
 class Shot(CircleShape):
     def __init__(self, x: float, y: float, shot_radius=SHOT_RADIUS) -> None:
@@ -21,6 +21,7 @@ class Shot(CircleShape):
 
         screen.blit(teleport_sprite1[6], teleport_sprite1[10].get_rect(center = (self.position)))
         pygame.draw.circle(screen, "#3C8263", self.position, self.radius, LINE_WIDTH)
+        # pygame.draw.circle(screen, "#FF0000", self.position, self.radius)
 
     
     def distance(self, position: tuple[list[int,int]], dt, range=2):
@@ -53,55 +54,52 @@ class Shot(CircleShape):
 class WaveShot(Shot):
     def __init__(self, x, y):
         super().__init__(x,y)
-        self.cooldown = DOUBLESHOT_COOLDOWN_SECONDS
+        self.cooldown = WAVESHOT_COOLDOWN_SECONDS
         self.limit_range = True
         self.immunity = True
-        self.num = 0
         
     def draw(self, screen):
             # indicator
             pygame.draw.circle(screen, "#F12020", self.position, 20)
+            
+            
     def second_shot(self, dt):
+        shot = Shot(self.position.x , self.position.y)
+        shot2 = Shot(self.position.x , self.position.y)
         rotation = self.velocity.rotate(90) 
-        shot = Shot(self.position.x - 50 , self.position.y)
+        shot2.limit_range = True
         shot.limit_range = True
+        shot2.velocity = -rotation * 100 * dt
         shot.velocity = rotation * 100 * dt
         
         
     def update(self, dt):
-        self.position += 0.4 * self.velocity.rotate(0) * dt
-        if self.limit_range and self.timer < 3 and self.num < 500:
-            self.num += 1
+        self.position += 0.4 * self.velocity * dt
+        if self.limit_range:
+            self.distance(self.position, dt, 3)
             self.second_shot(dt)
-            self.timer += 1.5 * dt
         else:
             self.kill()
-
-
-
-
-
-
-
 
 
 
 class BarrierShot(Shot):
     def __init__(self, x, y):
         super().__init__(x,y)
-        self.cooldown = DOUBLESHOT_COOLDOWN_SECONDS
+        self.cooldown = BARRIER_SHOT_COOLDOWN_SECONDS
         self.limit_range = True
         self.immunity = True
-        self.num = 0
         
         
-    def second_shot(self, dt, gap=2):
+    def second_shot(self, dt):
         # implement for loop to create a gap
+        rotation = self.velocity.rotate(90)
         shot = Shot(self.position.x, self.position.y)
+        shot2 = Shot(self.position.x, self.position.y)
+        shot2.limit_range = True
         shot.limit_range = True
-        shot.distance(self.position, dt, 3)
-        # this is the movement
-        shot.velocity = self.velocity * 10 * dt
+        shot2.velocity = -rotation * 10 * dt
+        shot.velocity = rotation * 10 * dt
         
     def draw(self, screen):
         # indicator
@@ -110,12 +108,10 @@ class BarrierShot(Shot):
         
     def update(self, dt):
         self.position += self.velocity * 1.5 * dt
-        if self.limit_range and self.num < 10:
+        if self.limit_range:
             self.distance(self.position, dt, 2.5)
             self.second_shot(dt)
-            self.num+=1
-            self.timer += 1 * dt
-        if self.timer >= 5:
+        else:
             self.kill()
   
 

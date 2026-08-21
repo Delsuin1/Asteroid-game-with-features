@@ -4,7 +4,7 @@ from pyfiles.images import *
 from pyfiles.animate import animate
 from pyfiles.sounds import *
 import random
-from pyfiles.shot import Shot, Bomb, BarrierShot
+from pyfiles.shot import Shot, Bomb, BarrierShot, WaveShot
 from pyfiles.constants import (
     PLAYER_RADIUS, 
     LINE_WIDTH, 
@@ -142,7 +142,7 @@ class Player(CircleShape):
         rotated_shot = shot_vector.rotate(self.rotation + random.randint(-10,10))
         shot_speed = rotated_shot * PLAYER_SHOOT_SPEED
         projectile.velocity = shot_speed
-        
+
     def update(self, dt: float) -> None:
         time = False if self.immunity else True
         boost = False
@@ -173,9 +173,7 @@ class Player(CircleShape):
                         self.shoot(self.skill)
                 
                     
-                    # This should be gone once skill orb is fully functional
-                    if keys[pygame.K_g] and self.cooldown < 0:
-                        self.shoot(Bomb)
+
                         
                     # create a faster acceleration sprint feature
                     # create an animation that players behind the ship to make a bigger blast

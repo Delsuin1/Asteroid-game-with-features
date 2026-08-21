@@ -1,6 +1,6 @@
 import pygame
 from pyfiles.circleshape import CircleShape
-from pyfiles.shot import Shot, Bomb, BarrierShot
+from pyfiles.shot import Shot, Bomb, BarrierShot, WaveShot
 from pyfiles.constants import LEFT, RIGHT, TOP, BOTTOM, SCREEN_WIDTH, SCREEN_HEIGHT
 import random
 
@@ -20,6 +20,8 @@ class SkillOrb(CircleShape):
             pygame.draw.circle(screen, "gold", self.position, self.radius)
         elif self.skill == BarrierShot:
             pygame.draw.circle(screen, "blue", self.position, self.radius)
+        elif self.skill == WaveShot:
+            pygame.draw.circle(screen, "brown", self.position, self.radius)
             
     def update(self, dt):
         

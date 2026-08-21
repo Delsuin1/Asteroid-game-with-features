@@ -49,12 +49,13 @@ def main():
     Hud.containers = (gui)
     SkillOrb.containers = (updatable, drawable, orbs)
 
-    weapon_types = [Shot, Bomb, BarrierShot]
+    weapon_types = [Shot, Bomb, BarrierShot, WaveShot]
     
     player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
     asteroid_field = AsteroidField()
     orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice(weapon_types)) 
     hud = Hud(player)
+    
     score_dict = {
         "max" : 0,
         "med" : 0,
@@ -86,7 +87,12 @@ def main():
                 if event.key == pygame.K_q:
                     game_active = False
                     
-                                     
+                if event.key == pygame.K_j:    
+                    player.skill = BarrierShot
+                if event.key == pygame.K_k:
+                    player.skill = WaveShot   
+                if event.key == pygame.K_l:  
+                    player.skill = Bomb                 
             if not game_active:
                 if event.type == pygame.KEYDOWN:               
                     if event.key == pygame.K_SPACE:
@@ -120,14 +126,11 @@ def main():
                     orb.timer = True
                     
                     player.skill = orb.skill
-                    print(True)
                     
                     
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
                     log_event("player_hit")
-                    
-                    
                     collide_position = player.position.x, player.position.y
                     game_active = player.destroyed(game_active)
 
@@ -135,6 +138,7 @@ def main():
             for asteroid in asteroids:
                 for shot in shots:
                     if asteroid.collides_with(shot):
+                        asteroid.immunity = True
                         log_event("asteroid_shot")
                         if asteroid.radius >= ASTEROID_MAX_RADIUS:
                             score_dict["max"] += ASTEROID_MAX_POINTS
@@ -163,19 +167,16 @@ def main():
             
         else:
             screen.blit(background, background_rect)
-            for asteroid in asteroids:
-                asteroid.draw(screen)
             draw_text("Press SPACE to start", MENU_TEXT_FONT, TEXT_COLOR, X,300)
             draw_text("Press Q to stop", MENU_TEXT_FONT, TEXT_COLOR, X,350)
             max, medium, min = score_dict.values()
-            # print(f"{max}\n{medium}\n{min}")
             draw_text(f"YOUR SCORE", MENU_TEXT_FONT, TEXT_COLOR, 1024,150)
+            # print(f"{max}\n{medium}\n{min}")
             draw_text(f"{score_dict["max"], score_dict["med"], score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,250)
             draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,200)
-            player.lives = PLAYER_LIVES
+            
                 
           
-        print(clock)
         dt = clock.tick(60) / 1000  
         pygame.display.flip()
         
