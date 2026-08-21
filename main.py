@@ -10,6 +10,7 @@ from pyfiles.sounds import background_music
 from pyfiles.shot import *
 from pyfiles.skillorb import SkillOrb
 from sys import exit as leave
+from pyfiles.stars import Stars
 import random
 
 
@@ -35,7 +36,6 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group() 
     shots = pygame.sprite.Group()
-    gui = pygame.sprite.Group()
     orbs = pygame.sprite.Group()
     
     bgm = pygame.mixer.music.load(background_music)
@@ -46,15 +46,13 @@ def main():
     AsteroidField.containers = (updatable)
     Player.containers = (updatable, drawable)
     Shot.containers = (shots, drawable, updatable)
-    Hud.containers = (gui)
+    Hud.containers = (drawable, updatable)
     SkillOrb.containers = (updatable, drawable, orbs)
+    Stars.containers = (updatable, drawable)
 
     weapon_types = [Shot, Bomb, BarrierShot, WaveShot]
     
-    player = Player(X, Y, PLAYER_STAMINA, PLAYER_LIVES)
-    asteroid_field = AsteroidField()
-    orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice(weapon_types)) 
-    hud = Hud(player)
+
     
     score_dict = {
         "max" : 0,
@@ -64,22 +62,26 @@ def main():
             
     collide_position = [X,Y]
     
-    def restart():
+    def start():
+        # This is where classes are called 
+        
         player = Player(X,Y, PLAYER_STAMINA, PLAYER_LIVES)
+        stars = Stars(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, player.position)
         asteroid_field = AsteroidField()
         hud = Hud(player)
         orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice(weapon_types))
-
         return player, asteroid_field, hud, orb
     
+    
+    
+    running = True
     clock = pygame.time.Clock()
     dt = 0.0
     
-    while True:
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                leave()
+                running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     game_active = False
@@ -101,7 +103,7 @@ def main():
                         drawable.empty()
                         asteroids.empty()
                         orbs.empty()
-                        player, asteroid_field, hud, orb = restart()
+                        player, asteroid_field, hud, orb = start()
                         
                         game_active = True
                     
@@ -118,7 +120,6 @@ def main():
             
             
             for orb in orbs:
-       
                 if orb.collides_with(player):
                     orb.timer = True
                     
@@ -154,7 +155,6 @@ def main():
             player.teleport_animation(screen, dt, collide_position)
             for drawables in drawable:
                 drawables.draw(screen)
-            hud.draw(screen)
             # draw to hud screen
 
             draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1200,40)
@@ -173,11 +173,13 @@ def main():
             draw_text(f"{score_dict["max"], score_dict["med"], score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,250)
             draw_text(f"{score_dict["max"] + score_dict["med"] + score_dict["min"]}", MENU_TEXT_FONT, TEXT_COLOR, 1024,200)
             
-                
           
         dt = clock.tick(60) / 1000  
         pygame.display.flip()
-        
+
+    if not running:
+        pygame.quit()
+        leave()      
             
             
 
