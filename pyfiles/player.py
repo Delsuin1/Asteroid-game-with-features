@@ -200,8 +200,10 @@ class Player(CircleShape):
                 self.accel = 0
             if self.accel != 0:
                 self.move(dt)
-            if not keys[pygame.K_w]:
-                self.accel *= friction 
+            if self.accel > 0.6:
+                self.accel -= friction 
+            elif -self.accel > -0.6:
+                self.accel += friction
         self.cooldown -= dt
         if self.cooldown < 0:
             self.cooldown = - 0.1
