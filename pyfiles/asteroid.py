@@ -28,6 +28,14 @@ class Asteroid(CircleShape):
             self.frame = 0
          
         
+    def inboundary(self, left, right, top, bottom):
+        if self.position.x > right or self.position.x < left:
+            self.kill()
+        elif self.position.y > bottom or self.position.y < top:
+            self.kill()
+     
+        
+        
     def update(self, dt) -> None:
         self.asteroid_frame = self.get_frame(self.asteroid_sprite, dt)     
         self.position += self.velocity * dt

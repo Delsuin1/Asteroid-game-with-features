@@ -57,27 +57,32 @@ class WaveShot(Shot):
         self.cooldown = WAVESHOT_COOLDOWN_SECONDS
         self.limit_range = True
         self.immunity = True
+        self.number = 0
         
     def draw(self, screen):
             # indicator
-            pygame.draw.circle(screen, "#F12020", self.position, 20)
+            # pygame.draw.circle(screen, "#F12020", self.position, 20)
+            pass
+            
             
             
     def second_shot(self, dt):
-        shot = Shot(self.position.x , self.position.y)
-        shot2 = Shot(self.position.x , self.position.y)
-        rotation = self.velocity.rotate(90) 
-        shot2.limit_range = True
-        shot.limit_range = True
-        shot2.velocity = -rotation * 100 * dt
-        shot.velocity = rotation * 100 * dt
-        
+        if self.number < 500:
+            shot1 = Shot(self.position.x-100 , self.position.y)
+            shot2 = Shot(self.position.x+100 , self.position.y)
+            rotation = self.velocity.rotate(90) 
+            shot2.limit_range = True
+            shot1.limit_range = True
+            shot2.velocity = -rotation * 100 * dt
+            shot1.velocity = rotation * 100 * dt
+
         
     def update(self, dt):
         self.position += 0.4 * self.velocity * dt
         if self.limit_range:
             self.distance(self.position, dt, 3)
             self.second_shot(dt)
+            self.number += 1
         else:
             self.kill()
 
@@ -103,7 +108,8 @@ class BarrierShot(Shot):
         
     def draw(self, screen):
         # indicator
-        pygame.draw.circle(screen, "#F12020", self.position, 20)
+        # pygame.draw.circle(screen, "#F12020", self.position, 20)
+        pass
         
         
     def update(self, dt):
