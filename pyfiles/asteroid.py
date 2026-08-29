@@ -31,9 +31,23 @@ class Asteroid(CircleShape):
     def update(self, dt) -> None:
         self.asteroid_frame = self.get_frame(self.asteroid_sprite, dt)     
         self.position += self.velocity * dt
-        self.in_boundary(LEFT, RIGHT, TOP, BOTTOM)
+        not self.in_boundary(LEFT-100, RIGHT+100, TOP-100, BOTTOM+100)
         
+    def in_boundary(self, left, right, top, bottom):
+        # Example: If player x coor is more than the screens width(1280),
+        # reduce the player's x coordinate by the screens width returning the player to the opposite side of the screen(left side).
         
+        # If the player goes in the opposite direction, check if the player is at x coor 0 if it is add the screen's width.
+        # This places the player on the opposite side(right side).
+        
+        # Add padding so the player model completely leaves frame
+        if self.position.x > right or self.position.x < left:
+            self.kill()
+
+        elif self.position.y > bottom or self.position.y < top:
+            self.kill()
+
+           
         
         
 

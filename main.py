@@ -66,7 +66,7 @@ def main():
         # This is where classes are called 
         
         player = Player(X,Y, PLAYER_STAMINA, PLAYER_LIVES)
-        stars = Stars(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, player.position)
+        stars = Stars(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, player)
         asteroid_field = AsteroidField()
         hud = Hud(player)
         orb = SkillOrb(random.randint(0,SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 40, random.choice(weapon_types))
@@ -115,7 +115,7 @@ def main():
             # Background images
             updatable.update(dt)
             screen.fill("black")
-            screen.blit(background, background_rect)
+            # screen.blit(background, background_rect)
             
             
             
