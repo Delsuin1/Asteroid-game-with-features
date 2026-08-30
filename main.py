@@ -50,7 +50,7 @@ def main():
     SkillOrb.containers = (updatable, drawable, orbs)
     Stars.containers = (updatable, drawable)
 
-    weapon_types = [Shot, Bomb, BarrierShot, WaveShot]
+    weapon_types = [Shot, Bomb, BarrierShot]
     
 
     

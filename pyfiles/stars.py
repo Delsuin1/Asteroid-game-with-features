@@ -85,7 +85,7 @@ class Stars(CircleShape):
     def draw(self, screen: pygame.Surface):
         
         for star in self.stars:
-            pygame.draw.circle(screen, star.color, (star.position.x - self.player.position.x * .5 , star.position.y - self.player.position.y - .5), self.radius)
+            pygame.draw.circle(screen, star.color, (star.position.x - self.player.position.x * .5 , star.position.y - self.player.position.y * .5), self.radius)
 
 
     def spawn_star(self):
